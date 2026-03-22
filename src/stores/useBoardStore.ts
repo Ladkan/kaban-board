@@ -8,7 +8,7 @@ interface BoardStore {
     activeBoard: Board | null;
     isLoading: boolean;
     fetchBoard: () => Promise<void>;
-    createBoard: (title: string) => Promise<RecordModel>;
+    createBoard: (title: string, members: string[]) => Promise<RecordModel>;
     setActiveBoard: (board: Board) => void; 
 }
 
@@ -23,8 +23,8 @@ export const useBoardStore = create<BoardStore>((set) => ({
         set({ boards: boards as unknown as Board[], isLoading: false })
     },
     
-    createBoard: async (title) => {
-        const board = await createBoard(title)
+    createBoard: async (title, members) => {
+        const board = await createBoard(title, members)
         set((s) => ({ boards: [board as unknown as Board, ...s.boards] }))
         return board
     },

@@ -1,11 +1,13 @@
 import { useForm } from "@tanstack/react-form";
-import { useAuthStore } from "../lib/stores/useAuthStore";
+import { useAuthStore } from "../stores/useAuthStore";
 import { Link, Navigate } from "react-router-dom";
 
 export default function Register() {
-  const { register, isAuthenticated } = useAuthStore();
+  const { isAuthenticated } = useAuthStore();
 
-  if (isAuthenticated) return <Navigate to="/" replace />;
+  const regex = RegExp(/^[\w\-\.]+@([\w-]+\.)+[\w-]{2,}$/)
+
+  if (isAuthenticated) return <Navigate to="/kaban-board" replace />;
 
   const form = useForm({
     defaultValues: {
@@ -15,7 +17,9 @@ export default function Register() {
       passwordConfirm: "",
     },
     onSubmit: async ({ value }) => {
-      await register(value.name, value.email, value.password);
+      //await register(value.name, value.email, value.password);
+      console.log(value)
+      alert("This is a demo, use the provided credentials")
     },
   });
 
@@ -82,7 +86,7 @@ export default function Register() {
               name="email"
               validators={{
                 onBlur: ({ value }) =>
-                  value.length >= 1 ? undefined : "Enter email",
+                  regex.test(value) ? undefined : "Enter valid email"
               }}
               children={(field) => (
                 <>
@@ -196,7 +200,7 @@ export default function Register() {
       </form>
       <p className="mt-8 text-center text-sm text-[#424654]">
         Already have an account?{" "}
-        <Link className="text-[#0040a1] font-bold hover:underline" to="/login">
+        <Link className="text-[#0040a1] font-bold hover:underline" to="/kaban-board/login">
           Login
         </Link>
       </p>

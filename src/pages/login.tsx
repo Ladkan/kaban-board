@@ -1,11 +1,11 @@
 import { useForm } from "@tanstack/react-form";
-import { useAuthStore } from "../lib/stores/useAuthStore";
+import { useAuthStore } from "../stores/useAuthStore";
 import { Navigate, Link } from "react-router-dom";
 
 export default function Login() {
   const { login, isAuthenticated } = useAuthStore();
 
-  if (isAuthenticated) return <Navigate to="/" replace />;
+  if (isAuthenticated) return <Navigate to="/kaban-board" replace />;
 
   const form = useForm({
     defaultValues: {
@@ -116,13 +116,13 @@ export default function Login() {
               Login
             </button>
           )}
-        </form.Subscribe>{" "}
+        </form.Subscribe>
       </form>
       <p className="mt-8 text-center text-sm text-[#424654]">
-        Don't have an account?{" "}
+        Don't have an account?
         <Link
           className="text-[#0040a1] font-bold hover:underline"
-          to="/register"
+          to="/kaban-board/register"
         >
           Register for free
         </Link>

@@ -4,7 +4,7 @@ import type { Board } from "../../types";
 import { Link } from "react-router-dom";
 
 interface BoardProps {
-    board: Board
+    board: Board;
 }
 
 type State = {
@@ -86,7 +86,7 @@ export default function BoardItem({ board }: BoardProps) {
 
     return(
         <article className="group relative flex flex-col bg-white rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-xl hover:border-primary/20 transition-all duration-500 overflow-hidden">
-            <Link to={"/board/"+board.id} className="p-6 flex flex-col h-full">
+            <Link to={"/kaban-board/board/"+board.id} className="p-6 flex flex-col h-full">
                 <h3 className="text-xl font-extrabold mb-2  group-hover:text-primary transition-colors">{board.title}</h3>
                 <div className="mt-auto">
                     <div className="flex items-center justify-between mb-3">

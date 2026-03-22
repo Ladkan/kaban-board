@@ -3,13 +3,14 @@ import { client } from "./pocketbase"
 export const getBoards = async () => {
     return await client.collection('boards').getFullList({
         sort: '-created',
-        expand: 'owner,member',
+        expand: 'owner,members',
     })
 }
 
-export const createBoard = async (title: string) => {
+export const createBoard = async (title: string, members: string[]) => {
     const board = await client.collection('boards').create({
         title,
+        members,
         owner: client.authStore.record?.id,
     })
 

@@ -1,6 +1,6 @@
-import NewProjectModal from "../lib/components/modals/NewProject.modal";
-import BoardItem from "../lib/components/ui/BoardItem";
-import { useBoardStore } from "../lib/stores/useBoardStore";
+import NewProjectModal from "../components/modals/NewProject";
+import BoardItem from "../components/ui/BoardItem";
+import { useBoardStore } from "../stores/useBoardStore";
 import { useEffect, useState } from "react";
 
 export default function Home() {
@@ -29,7 +29,7 @@ export default function Home() {
       </header>
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
         {boards.map((board) => (
-          <BoardItem key={board.id} board={board} />
+          <BoardItem  key={board.id} board={board} />
         ))}
       </section>
       {newModal ? <NewProjectModal setNewModal={setNewModal} newModal={newModal} /> : ''}
