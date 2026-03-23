@@ -8,7 +8,7 @@ export default function Layout(){
         <>
             <Sidebar />
             <Header />
-            <main className="md:ml-64 pt-24 px-12 pv-12">
+            <main className="md:ml-64 pt-16 px-6 pv-6 md:pt-24 md:px-12 md:pv-12 h-full">
                 <Outlet />
             </main>
         </>

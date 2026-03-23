@@ -23,10 +23,10 @@ export const createBoard = async (title: string, members: string[]) => {
     return board
 }
 
-export const addMember = async (boardId: string, userId: string) => {
-    const board = await client.collection('boards').getOne(boardId)
+export const updateBoard = async (boardId: string, title: string, members: string[]) => {
     return client.collection('boards').update(boardId, {
-        members: [...board.members, userId],
+        title,
+        members,
     })
 }
 

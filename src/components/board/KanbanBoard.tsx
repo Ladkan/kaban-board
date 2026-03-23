@@ -162,7 +162,7 @@ export default function KanbanBoard({ onAddTask, onTaskOpen }: KanbanBoardProps)
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
     >
-      <section className="flex-1 px-10 pb-10 flex gap-6 items-start">
+      <section className="h-full flex-1 px-10 pb-10 flex gap-6 items-start overflow-x-scroll md:overflow-auto">
         {columns.map(column => (
           <Column
             key={column.id}

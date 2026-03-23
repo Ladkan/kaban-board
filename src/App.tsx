@@ -1,14 +1,15 @@
 import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import ProtectedRoute from "./utils/ProtectedRoute";
-import Home from "./pages/home";
-import Login from "./pages/login";
-import Register from "./pages/register";
 import LayoutAuth from "./layout/LayoutAuth";
 import Layout from "./layout/Layout";
-import Board from "./pages/board";
-import Team from "./pages/team";
-import { Component, type ReactNode } from "react";
+import { Component, Suspense, lazy, type ReactNode } from "react";
+
+const ProtectedRoute = lazy(() => import("./utils/ProtectedRoute"));
+const Home = lazy(() => import("./pages/home"));
+const Login = lazy(() => import("./pages/login"));
+const Register = lazy(() => import("./pages/register"));
+const Board = lazy(() => import("./pages/board"));
+const Team = lazy(() => import("./pages/team"));
 
 class ErrorBoundary extends Component<
   { children: ReactNode },
@@ -34,27 +35,41 @@ function App() {
   return (
     <BrowserRouter>
       <ErrorBoundary>
-        <Routes>
-          <Route element={<LayoutAuth />}>
-            <Route element={<Login />} path="/kaban-board/login" />
-            <Route element={<Register />} path="/kaban-board/register" />
-          </Route>
-          <Route path="/" element={<Layout />}>
-            <Route element={<ProtectedRoute />}>
-              <Route element={<Home />} path="/kaban-board" />
-              <Route element={<Board />} path="/kaban-board/board/:boardId" />
-              <Route element={<Team />} path="/kaban-board/team" />
+        <Suspense
+          fallback={
+            <div style={{ color: "white", padding: "2rem", fontSize: "1rem" }}>
+              Loading...
+            </div>
+          }
+        >
+          <Routes>
+            <Route element={<LayoutAuth />}>
+              <Route element={<Login />} path="/kaban-board/login" />
+              <Route
+                element={<Register />}
+                path="/kaban-board/register"
+              />
             </Route>
-          </Route>
-          <Route
-            path="*"
-            element={
-              <div style={{ color: "red" }}>
-                NO ROUTE MATCH: {window.location.pathname}
-              </div>
-            }
-          />
-        </Routes>
+            <Route path="/" element={<Layout />}>
+              <Route element={<ProtectedRoute />}>
+                <Route element={<Home />} path="/kaban-board" />
+                <Route
+                  element={<Board />}
+                  path="/kaban-board/board/:boardId"
+                />
+                <Route element={<Team />} path="/kaban-board/team" />
+              </Route>
+            </Route>
+            <Route
+              path="*"
+              element={
+                <div style={{ color: "red" }}>
+                  NO ROUTE MATCH: {window.location.pathname}
+                </div>
+              }
+            />
+          </Routes>
+        </Suspense>
       </ErrorBoundary>
     </BrowserRouter>
   );

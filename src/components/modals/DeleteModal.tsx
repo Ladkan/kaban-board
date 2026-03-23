@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useBoardStore } from "../../stores/useBoardStore";
 import { useTaskStore } from "../../stores/useTaskStore";
+import { useEffect } from "react";
 
 interface DeleteModalProps {
   isOpen: boolean;
@@ -24,6 +25,14 @@ export default function DeleteModal({
     const { deleteTask } = useTaskStore()
 
     const navigate = useNavigate()
+
+    useEffect(() => {
+      function onKey(e: KeyboardEvent) {
+        if (e.key === "Escape") setModal(!isOpen);
+      }
+      if (isOpen) document.addEventListener("keydown", onKey);
+      return () => document.removeEventListener("keydown", onKey);
+    }, [isOpen]);
 
     function handleDelete(){
         if(boardId){

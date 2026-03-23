@@ -1,17 +1,20 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useBoardStore } from "../stores/useBoardStore";
 import KanbanBoard from "../components/board/KanbanBoard";
 import { useColumnStore } from "../stores/useColumnStore";
 import { useTaskStore } from "../stores/useTaskStore";
 import { client } from "../services/pocketbase";
-import TaskView from "../components/modals/TaskView";
 import type { Task } from "../types";
-import NewTask from "../components/modals/NewTask";
 import { useAuthStore } from "../stores/useAuthStore";
-import DeleteModal from "../components/modals/DeleteModal";
 
 export default function Board() {
+
+  const NewTask = lazy(() => import("../components/modals/NewTask"))
+  const TaskView = lazy(() => import("../components/modals/TaskView"))
+  const DeleteModal = lazy(() => import("../components/modals/DeleteModal"))
+  const BoardModal = lazy(() => import("../components/modals/BoardModal"))
+
   const { boardId } = useParams<{ boardId: string }>();
   const { boards, activeBoard, setActiveBoard } = useBoardStore();
   const { fetchColumns } = useColumnStore();
@@ -23,6 +26,7 @@ export default function Board() {
   const [openTask, setOpenTask] = useState(false);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [openDeleteModal, setOpenDeleteModal] = useState(false)
+  const [openBoardModal, setOpenBoardModal] = useState(false)
 
   useEffect(() => {
     const board = boards.find((b) => b.id === boardId);
@@ -37,9 +41,7 @@ export default function Board() {
     fetchColumns(boardId);
     fetchTasks(boardId);
     //@ts-ignore
-    const unsubColumns = client
-      .collection("columns")
-      .subscribe("*", ({ action, record }) => {
+    const unsubColumns = client.collection("columns").subscribe("*", ({ action, record }) => {
         if (record.board !== boardId) return;
         fetchColumns(boardId);
       });
@@ -76,20 +78,30 @@ export default function Board() {
 
   return (
     <>
-      <section className="px-10 py-8 flex items-end justify-between shrink-0">
+      <section className="px-5 py-4 md:px-10 md:py-8 flex items-end justify-between shrink-0">
         <div>
           <h2 className="text-4xl font-extrabold tracking-tight text-on-surface">
             {activeBoard?.title}
           </h2>
         </div>
         {isOwner ? (
+          <div className="flex gap-4">
           <button 
+            type="button" 
+            className="text-on-secondary-container bg-secondary-container hover:bg-on-secondary-container hover:text-secondary-container transition-colors cursor-pointer rounded-full font-bold px-3 py-2 text-sm"
+            onClick={() => setOpenBoardModal(!openBoardModal)} 
+          >
+              Update
+          </button>
+          <button
+            type="button" 
             className="text-on-error-container bg-error-container hover:bg-on-error-container hover:text-error-container transition-colors cursor-pointer rounded-full font-bold px-3 py-2 text-sm"
             onClick={() => setOpenDeleteModal(!openDeleteModal)}
             >
             
             Delete
           </button>
+          </div>
         ) : null}
       </section>
       <KanbanBoard
@@ -97,13 +109,16 @@ export default function Board() {
         onAddTask={handleAddTask}
         onTaskOpen={handleOnTaskOpen}
       />
-      <NewTask
-        isOpen={openModal}
-        columId={activeColumnId}
-        onClose={handleCloseModal}
-      />
-      <TaskView isOpen={openTask} task={activeTask} onClose={handleCloseTask} />
-      <DeleteModal boardId={boardId} isOpen={openDeleteModal} setModal={setOpenDeleteModal} />
+      <Suspense fallback={null}>
+        <NewTask
+          isOpen={openModal}
+          columId={activeColumnId}
+          onClose={handleCloseModal}
+        />
+        <TaskView isOpen={openTask} task={activeTask} onClose={handleCloseTask} />
+        <DeleteModal boardId={boardId} isOpen={openDeleteModal} setModal={setOpenDeleteModal} />
+        <BoardModal board={boards.find(b => b.id === boardId)} isOpen={openBoardModal} setModal={setOpenBoardModal} />
+      </Suspense>
     </>
   );
 }

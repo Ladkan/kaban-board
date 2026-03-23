@@ -1,9 +1,11 @@
-import NewProjectModal from "../components/modals/NewProject";
 import BoardItem from "../components/ui/BoardItem";
 import { useBoardStore } from "../stores/useBoardStore";
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 
 export default function Home() {
+
+  const BoardModal = lazy(() => import("../components/modals/BoardModal"))
+
   const { boards, fetchBoard } = useBoardStore();
 
   const [newModal, setNewModal] = useState(false)
@@ -16,11 +18,11 @@ export default function Home() {
     <>
       <header className="flex justify-between items-end mb-10">
         <div>
-          <h2 className="text-4xl font-extrabold tracking-tighter text-on-surface">
+          <h2 className="text-2xl md:text-4xl font-extrabold tracking-tighter text-on-surface">
             Dashboard
           </h2>
         </div>
-        <button onClick={() => setNewModal(!newModal)} className="cursor-pointer bg-primary text-on-primary font-label px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-primary/20 hover:shadow-primary/30 hover:-translate-y-0.5 transition-all group">
+        <button onClick={() => setNewModal(!newModal)} className="cursor-pointer text-sm md:text-base bg-primary text-on-primary px-3 py-1.5 md:px-6 md:py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-primary/20 hover:shadow-primary/30 hover:-translate-y-0.5 transition-all group">
           <span className="material-symbols-outlined" data-icon="add">
             add
           </span>
@@ -32,7 +34,13 @@ export default function Home() {
           <BoardItem  key={board.id} board={board} />
         ))}
       </section>
-      {newModal ? <NewProjectModal setNewModal={setNewModal} newModal={newModal} /> : ''}
+      {newModal ? (
+        <Suspense fallback={null}>
+          <BoardModal setModal={setNewModal} isOpen={newModal} />
+        </Suspense>
+      ) : (
+        <></>
+      )}
     </>
   );
 }

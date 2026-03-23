@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy } from "react";
 import type { Task } from "../../types";
 import DOMPurify from "dompurify";
-import DeleteModal from "./DeleteModal";
 
 interface TaskViewProps {
   isOpen: boolean;
@@ -10,6 +9,9 @@ interface TaskViewProps {
 }
 
 export default function TaskView({ isOpen, onClose, task }: TaskViewProps) {
+
+  const DeleteModal = lazy(() => import("./DeleteModal"))
+
   const [visible, setVisible] = useState(false);
   const [closing, setClosing] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false)
