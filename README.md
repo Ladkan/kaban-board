@@ -162,10 +162,10 @@ Delete:    @request.auth.id != "" && board.owner = @request.auth.id
 
 **API Rules:**
 ```
-List/View: @request.auth.id != "" && column.board.owner = @request.auth.id
-Create:    @request.auth.id != ""
-Update:    @request.auth.id != ""
-Delete:    @request.auth.id != ""
+List/View: @request.auth.id != "" && (column.board.owner = @request.auth.id || column.board.members ~ @request.auth.id)
+Create:    @request.auth.id != "" && column.board.members ~ @request.auth.id
+Update:    @request.auth.id != "" && column.board.members ~ @request.auth.id
+Delete:    @request.auth.id != "" && column.board.members ~ @request.auth.id
 ```
 
 ---

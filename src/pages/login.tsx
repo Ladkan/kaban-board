@@ -1,11 +1,12 @@
 import { useForm } from "@tanstack/react-form";
 import { useAuthStore } from "../stores/useAuthStore";
 import { Navigate, Link } from "react-router-dom";
+import { useState } from "react";
+import { client } from "../services/pocketbase";
 
 export default function Login() {
-  const { login, isAuthenticated } = useAuthStore();
-
-  if (isAuthenticated) return <Navigate to="/kaban-board" replace />;
+  const { login } = useAuthStore();
+  const [serverError, setServerError] = useState<string | null>(null)
 
   const form = useForm({
     defaultValues: {
@@ -13,9 +14,17 @@ export default function Login() {
       password: "",
     },
     onSubmit: async ({ value }) => {
-      await login(value.email, value.password);
+      setServerError(null)
+      try{
+        await login(value.email, value.password);
+      } catch (err:any){
+        console.error('login error:', err);
+        setServerError(err?.response.message ?? "Wrong email or password") 
+      }
     },
   });
+
+  if (client.authStore.isValid) return <Navigate to="/kaban-board" replace />;
 
   return (
     <div className="w-full max-w-110 rounded-xl p-10 z-10 border border-[#c3c6d6]/15 tonal-depth glass-panel">
@@ -35,6 +44,11 @@ export default function Login() {
         noValidate
         className="space-y-6"
       >
+        {serverError && (
+          <div className="bg-[#fce8e8] text-[#93000a] text-sm px-4 py-3 rounded-lg">
+            {serverError}
+          </div>
+        )}
         <div className="space-y-2">
           <label
             htmlFor="email"
@@ -119,7 +133,7 @@ export default function Login() {
         </form.Subscribe>
       </form>
       <p className="mt-8 text-center text-sm text-[#424654]">
-        Don't have an account?
+        Don't have an account? 
         <Link
           className="text-[#0040a1] font-bold hover:underline"
           to="/kaban-board/register"

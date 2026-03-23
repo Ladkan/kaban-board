@@ -7,7 +7,6 @@ export default function Register() {
 
   const regex = RegExp(/^[\w\-\.]+@([\w-]+\.)+[\w-]{2,}$/)
 
-  if (isAuthenticated) return <Navigate to="/kaban-board" replace />;
 
   const form = useForm({
     defaultValues: {
@@ -22,6 +21,8 @@ export default function Register() {
       alert("This is a demo, use the provided credentials")
     },
   });
+
+  if (isAuthenticated) return <Navigate to="/kaban-board" replace />;
 
   return (
     <div className="w-full max-w-110 rounded-xl p-10 z-10 border border-[#c3c6d6]/15 tonal-depth glass-panel">

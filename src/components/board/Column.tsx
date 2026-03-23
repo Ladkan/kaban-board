@@ -7,12 +7,13 @@ interface ColumnProps {
   column:     ColumnType;
   tasks:      Task[];
   onAddTask:  (columnId: string) => void;
+  onTaskOpen: (task: Task) => void;
 }
 
 
-export default function Column({ column, tasks, onAddTask }: ColumnProps) {
+export default function Column({ column, tasks, onAddTask, onTaskOpen }: ColumnProps) {
 
-    const { setNodeRef, isOver } = useDroppable({ id: column.id })
+    const { setNodeRef } = useDroppable({ id: column.id })
 
     return(
         <div className="w-80 shrink-0 flex flex-col max-h-full">
@@ -26,9 +27,9 @@ export default function Column({ column, tasks, onAddTask }: ColumnProps) {
             <SortableContext items={tasks.map(t => t.id)} strategy={verticalListSortingStrategy}>
                 <div ref={setNodeRef} className="flex-1 space-y-4 pr-1 min-h-24">
                     {tasks.map(task => (
-                        <TaskCard key={task.id} task={task} />
+                        <TaskCard key={task.id} task={task} onTaskOpen={onTaskOpen} />
                     ))}
-                    <button className="w-full py-4 border-2 border-dashed border-outline-variant/30 rounded-xl text-on-surface-variant/50 flex items-center justify-center gap-2 hover:border-primary/50 hover:text-primary transition-all group">
+                    <button onClick={() => onAddTask(column.id)} className="w-full py-4 border-2 border-dashed border-outline-variant/30 rounded-xl text-on-surface-variant/50 flex items-center justify-center gap-2 hover:border-primary/50 hover:text-primary transition-all group">
                         <span className="material-symbols-outlined text-lg">add_circle</span>
                         <span className="text-sm font-bold">Add Task</span>
                     </button>

@@ -19,7 +19,7 @@ export const createBoard = async (title: string, members: string[]) => {
         client.collection("columns").create({ title: "In Progress", order: 2000, board: board.id }),
         client.collection("columns").create({ title: "Done", order: 3000, board: board.id }),
     ])
-
+    
     return board
 }
 

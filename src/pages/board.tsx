@@ -1,32 +1,25 @@
-import { useEffect, useReducer, useTransition } from "react"
+import { useEffect, useReducer, useState } from "react"
 import { useParams } from "react-router-dom"
 import { useBoardStore } from "../stores/useBoardStore"
 import KanbanBoard from "../components/board/KanbanBoard"
 import { useColumnStore } from "../stores/useColumnStore"
 import { useTaskStore } from "../stores/useTaskStore"
 import { client } from "../services/pocketbase"
-
-type State = {
-    taskModalOpen: boolean;
-    activeColumnId: string | null;
-}
-
-const initialState: State = {
-    taskModalOpen: false,
-    activeColumnId: '',
-}
-
-function reducer(state: State, action: Partial<State>): State {
-    return {...state, ...action}
-}
+import NewTask from "../components/modals/newTask"
+import TaskView from "../components/modals/TaskView"
+import type { Task } from "../types"
 
 export default function Board(){
 
     const { boardId } = useParams<{ boardId: string }>()
     const { boards, activeBoard, setActiveBoard } = useBoardStore()
-    const [state, dispatch] = useReducer(reducer, initialState)
     const { fetchColumns } = useColumnStore() 
     const { fetchTasks } = useTaskStore()
+
+    const [openModal, setOpenModal] = useState(false)
+    const [activeColumnId, setActiveColumnId] = useState<string | null>(null)
+    const [openTask, setOpenTask] = useState(false)
+    const [activeTask, setActiveTask] = useState<Task | null>(null)
 
     useEffect(() => {
         const board = boards.find(b => b.id === boardId)
@@ -38,7 +31,7 @@ export default function Board(){
 
         fetchColumns(boardId)
         fetchTasks(boardId)
-
+        //@ts-ignore
         const unsubColumns = client.collection("columns").subscribe('*', ({ action, record }) => {
             if(record.board !== boardId) return
             fetchColumns(boardId)
@@ -56,7 +49,25 @@ export default function Board(){
     }, [boardId])
 
     function handleAddTask(columnId: string){
-        dispatch({ activeColumnId: columnId, taskModalOpen: true })
+        console.log(columnId)
+        setActiveColumnId(columnId)
+        setOpenModal(!openModal)
+    }
+
+    function handleOnTaskOpen(task: Task){
+        setActiveTask(task)
+        setOpenTask(!openTask)
+        console.log(openTask)
+    }
+
+    function handleCloseModal(){
+        setOpenModal(!openModal)
+        setActiveColumnId(null)
+    }
+
+    function handleCloseTask(){
+        setOpenTask(!openTask)
+        setActiveTask(null)
     }
 
     return(
@@ -66,7 +77,17 @@ export default function Board(){
                     <h2 className="text-4xl font-extrabold tracking-tight text-on-surface">{activeBoard?.title}</h2>
                 </div>
             </section>
-            <KanbanBoard boardId={activeBoard?.id} onAddTask={handleAddTask} />
+            <KanbanBoard boardId={activeBoard?.id} onAddTask={handleAddTask} onTaskOpen={handleOnTaskOpen} />
+            <NewTask
+                isOpen={openModal}
+                columId={activeColumnId}
+                onClose={handleCloseModal}
+            />
+            <TaskView 
+                isOpen={openTask}
+                task={activeTask}
+                onClose={handleCloseTask}
+            />
         </>
     )
 }

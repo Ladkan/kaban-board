@@ -21,9 +21,10 @@ import { client } from "../../services/pocketbase";
 interface KanbanBoardProps {
   boardId:   string | undefined;
   onAddTask: (columnId: string) => void;
+  onTaskOpen: (task: Task) => void;
 }
 
-export default function KanbanBoard({ boardId, onAddTask }: KanbanBoardProps) {
+export default function KanbanBoard({ onAddTask, onTaskOpen }: KanbanBoardProps) {
   const columns       = useColumnStore(s => s.columns);
   const tasksByColumn = useTaskStore(s => s.tasksByColumn);
 
@@ -168,6 +169,7 @@ export default function KanbanBoard({ boardId, onAddTask }: KanbanBoardProps) {
             column={column}
             tasks={tasksByColumn[column.id] ?? []}
             onAddTask={onAddTask}
+            onTaskOpen={onTaskOpen}
           />
         ))}
       </section>

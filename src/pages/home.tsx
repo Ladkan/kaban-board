@@ -9,7 +9,7 @@ export default function Home() {
   const [newModal, setNewModal] = useState(false)
 
   useEffect(() => {
-    fetchBoard();
+    fetchBoard()
   }, []);
 
   return (
