@@ -1,1 +1,0 @@
-import{t as e}from"./jsx-runtime-D-oznMWL.js";import{a as t,o as n}from"./pocketbase-t18-m4vF.js";import{t as r}from"./index-B-7SjNmJ.js";var i=e();function a(){let{isAuthenticated:e}=r();return e?(0,i.jsx)(n,{}):(0,i.jsx)(t,{to:`/kaban-board/login`,replace:!0})}export{a as default};
