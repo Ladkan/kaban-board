@@ -47,7 +47,6 @@ export default function MemberPicker({value, onChange, values, onAdd}: MemberPic
 
         if(value !== undefined && onAdd){
             onAdd(userId)
-            console.log(value)
         }
 
         dispatch({ query: '' })

@@ -2,6 +2,7 @@ import { useForm } from "@tanstack/react-form";
 import type React from "react";
 import { useBoardStore } from "../../stores/useBoardStore";
 import MemberPicker from "./MemberPicker";
+import { useEffect } from "react";
 
 interface NewProjectModalProps {
     setNewModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -18,13 +19,20 @@ export default function NewProjectModal({setNewModal, newModal}: NewProjectModal
           members: [],
         },
         onSubmit: async ({ value }) => {
-        //     console.log(value)
           await createBoard(value.title, value.members);
           form.reset()
           setNewModal(!newModal)
         },
       });
-    
+      
+        useEffect(() => {
+        function onKey(e: KeyboardEvent) {
+            if (e.key === 'Escape') setNewModal(!newModal);
+        }
+        if (newModal) document.addEventListener('keydown', onKey);
+        return () => document.removeEventListener('keydown', onKey);
+        }, [newModal]);
+
       if(!newModal) return null
 
     return(

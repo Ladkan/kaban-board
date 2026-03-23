@@ -29,7 +29,11 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
         filter: `column.board = "${boardId}"`,
         sort:   'column,order',
         expand: 'assignee',
+        requestKey: `tasks-${boardId}-${Date.now()}`,
       });
+
+      console.log('tasks response:', tasks);
+      console.log('first task expand:', tasks[0]?.expand);
 
       const tasksByColumn = tasks.reduce<TaskMap>((acc, task) => {
         if (!acc[task.column]) acc[task.column] = [];
@@ -38,6 +42,8 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       }, {});
 
       set({ tasksByColumn });
+    }  catch (err){
+      console.error('fetchTasks error:', err)
     } finally {
       set({ isLoading: false });
     }

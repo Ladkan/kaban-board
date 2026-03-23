@@ -1,7 +1,8 @@
 import { create } from "zustand";
-import { createBoard, getBoards } from "../services/boardService";
+import { createBoard, deleteBoard, getBoards } from "../services/boardService";
 import { type RecordModel } from "pocketbase";
 import type { Board } from "../types";
+import { client } from "../services/pocketbase";
 
 interface BoardStore {
     boards: Board[];
@@ -9,7 +10,8 @@ interface BoardStore {
     isLoading: boolean;
     fetchBoard: () => Promise<void>;
     createBoard: (title: string, members: string[]) => Promise<RecordModel>;
-    setActiveBoard: (board: Board) => void; 
+    setActiveBoard: (board: Board) => void;
+    deleteBoard: (boardId: string) => void;
 }
 
 export const useBoardStore = create<BoardStore>((set) => ({
@@ -29,6 +31,11 @@ export const useBoardStore = create<BoardStore>((set) => ({
         return board
     },
 
-    setActiveBoard: (board) => set({ activeBoard: board })
+    setActiveBoard: (board) => set({ activeBoard: board }),
+
+    deleteBoard: async (boardId) => {
+        await deleteBoard(boardId)
+        set((s) => ({ boards: s.boards.filter(b => b.id !== boardId) }))
+    }
 
 }))

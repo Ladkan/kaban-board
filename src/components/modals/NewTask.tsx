@@ -2,6 +2,7 @@ import { useForm } from "@tanstack/react-form";
 import { useTaskStore } from "../../stores/useTaskStore";
 import MemberPicker from "./MemberPicker";
 import QuillEditor from "../ui/QuillEditor";
+import { useEffect } from "react";
 
 interface NewTaskProps {
   isOpen: boolean;
@@ -20,12 +21,22 @@ export default function NewTask({ columId, isOpen, onClose }: NewTaskProps) {
       assignee: "",
     },
     onSubmit: async ({ value }) => {
-      //     console.log(value)
       await createTask(columId as string, value);
       form.reset();
       onClose();
     },
   });
+
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+          if (e.key === 'Escape') onClose();
+    }
+      if (isOpen) document.addEventListener('keydown', onKey);
+      return () => {
+        document.removeEventListener('keydown', onKey)
+        form.reset()
+      };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
