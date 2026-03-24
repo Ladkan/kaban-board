@@ -1,8 +1,8 @@
 export interface Board {
   id: string;
   title: string;
-  owner: string;         
-  members: string[];       
+  owner: string;
+  members: string[];
   created: string;
   updated: string;
   expand?: {
@@ -18,24 +18,29 @@ export interface User {
 }
 
 export interface Task {
-  id:          string;
-  title:       string;
+  id: string;
+  title: string;
   description?: string;
-  order:       number;
-  priority?:   'low' | 'medium' | 'high';
-  column:      string;
-  assignee?:   string;
-  created:     string;
-  updated:     string;
+  order: number;
+  priority?: "low" | "medium" | "high";
+  column: string;
+  assignee?: string;
+  due_date?: string;
+  created: string;
+  updated: string;
   expand?: {
-    assignee?:         User;
+    assignee?: User;
   };
 }
 
 export interface Column {
-  id:      string;
-  title:   string;
-  order:   number;
-  color?:  string;
-  board:   string;
+  id: string;
+  title: string;
+  order: number;
+  color?: string;
+  board: string;
+}
+
+export type Props = {
+    field: ReturnType<any>
 }

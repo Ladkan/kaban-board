@@ -18,11 +18,11 @@ export default function QuillEditor({
 
     useEffect(() => {
         if(value) setContent(value)
-    },[])
+    },[value])
 
     return(
         <div className={`quill-wrapper ${className}`}>
-            <div  ref={containerRef} />
+            <div ref={containerRef} />
         </div>
     )
 

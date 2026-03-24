@@ -4,6 +4,9 @@ import { useBoardStore } from "../../stores/useBoardStore";
 import MemberPicker from "./MemberPicker";
 import { useEffect } from "react";
 import type { Board } from "../../types";
+import { toast } from "sonner";
+import Input from "../form/Input";
+import FormHeader from "../form/FormHeader";
 
 interface BoardModallProps {
   setModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -30,8 +33,10 @@ export default function BoardModal({
           value.title as string,
           value.members as string[],
         );
+        toast.info("Board updated")
       } else {
         await createBoard(value.title as string, value.members as string[]);
+        toast.success("New board created")
       }
 
       form.reset();
@@ -60,20 +65,8 @@ export default function BoardModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-on-surface/40 backdrop-blur-sm">
-      <div className="bg-surface-container-lowest w-full max-w-xl rounded-xl shadow-[0_12px_32px_-4px_rgba(25,28,30,0.12)] overflow-hidden flex flex-col max-h-[921px]">
-        <div className="px-8 pt-8 pb-4 flex justify-between items-start">
-          <div>
-            <h2 className="text-2xl font-extrabold text-on-surface tracking-tight">
-              {board ? "Update" : "Create new"} board
-            </h2>
-          </div>
-          <button
-            onClick={() => setModal(!isOpen)}
-            className="material-symbols-outlined text-on-surface-variant hover:text-error transition-colors"
-          >
-            close
-          </button>
-        </div>
+      <div className="bg-surface-container-lowest w-full max-w-xl rounded-xl shadow-[0_12px_32px_-4px_rgba(25,28,30,0.12)] overflow-hidden flex flex-col max-h-230.25">
+        <FormHeader title={board ? "Update board" : "Create new board"} onClick={() => setModal(!isOpen)}  />
         <form
           className="px-8 py-6 space-y-6 overflow-y-auto"
           onSubmit={(e) => {
@@ -97,23 +90,7 @@ export default function BoardModal({
               }}
             >
               {(field) => (
-                <>
-                  <input
-                    className="w-full bg-surface-container-high border-none border-b-2 border-transparent focus:border-primary focus:ring-0 px-4 py-3 rounded-t-lg text-on-surface placeholder:text-outline-variant transition-all"
-                    type="text"
-                    id="title"
-                    placeholder="New product"
-                    name={field.name}
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                  />
-                  {!field.state.meta.isValid && (
-                    <em className="text-xs text-[#93000a]">
-                      {field.state.meta.errors.join(",")}
-                    </em>
-                  )}
-                </>
+                <Input field={field} />
               )}
             </form.Field>
           </div>

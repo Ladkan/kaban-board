@@ -1,3 +1,4 @@
+import { useHotkey } from "@tanstack/react-hotkeys";
 import BoardItem from "../components/ui/BoardItem";
 import { useBoardStore } from "../stores/useBoardStore";
 import { lazy, Suspense, useEffect, useState } from "react";
@@ -9,6 +10,8 @@ export default function Home() {
   const { boards, fetchBoard } = useBoardStore();
 
   const [newModal, setNewModal] = useState(false)
+
+  useHotkey("N", () => setNewModal(true))
 
   useEffect(() => {
     fetchBoard()

@@ -40,8 +40,8 @@ export default function Board() {
 
     fetchColumns(boardId);
     fetchTasks(boardId);
-    //@ts-ignore
-    const unsubColumns = client.collection("columns").subscribe("*", ({ action, record }) => {
+    
+    const unsubColumns = client.collection("columns").subscribe("*", ({ record }) => {
         if (record.board !== boardId) return;
         fetchColumns(boardId);
       });

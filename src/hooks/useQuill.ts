@@ -17,19 +17,21 @@ export default function useQuill({ onChange, placeholder }: UseQuillOptions){
     useEffect(() => {
         if(!containerRef.current || quillRef.current) return
 
-        quillRef.current = new Quill(containerRef.current, {
+        const quill = new Quill(containerRef.current, {
             theme: 'snow',
             placeholder: placeholder ?? 'Add description...',
             modules: {
                 toolbar: [
                     ['bold','italic','underline','strike'],
-                    [{list: 'orderd'},{list: 'bullet'}],
+                    [{list: 'ordered'},{list: 'bullet'}],
                     ['blockquote','code-block'],
                     ['link'],
                     ['clean']
                 ],
             },
         })
+
+        quillRef.current = quill
 
         quillRef.current.on('text-change', () => {
             const html = quillRef.current!.getSemanticHTML()
@@ -38,7 +40,10 @@ export default function useQuill({ onChange, placeholder }: UseQuillOptions){
         })
 
         return () => {
+            quill.off("text-change")
             quillRef.current = null
+
+            if(containerRef.current) containerRef.current.innerHTML = ''
         }
 
     }, [])

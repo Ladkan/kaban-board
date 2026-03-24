@@ -3,6 +3,11 @@ import { useTaskStore } from "../../stores/useTaskStore";
 import MemberPicker from "./MemberPicker";
 import QuillEditor from "../ui/QuillEditor";
 import { useEffect } from "react";
+import { toast } from "sonner";
+import Input from "../form/Input";
+import Select from "../form/Select";
+import DatePicker from "../form/DatePicker";
+import FormHeader from "../form/FormHeader";
 
 interface NewTaskProps {
   isOpen: boolean;
@@ -17,25 +22,27 @@ export default function NewTask({ columId, isOpen, onClose }: NewTaskProps) {
     defaultValues: {
       title: "",
       description: "",
-      priority: "" as "low" | "medium" | "high" | undefined ,
+      priority: "" as "low" | "medium" | "high" | undefined,
       assignee: "",
+      due_date: "",
     },
     onSubmit: async ({ value }) => {
       await createTask(columId as string, value);
       form.reset();
       onClose();
+      toast.success("New task added");
     },
   });
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
-          if (e.key === 'Escape') onClose();
+      if (e.key === "Escape") onClose();
     }
-      if (isOpen) document.addEventListener('keydown', onKey);
-      return () => {
-        document.removeEventListener('keydown', onKey)
-        form.reset()
-      };
+    if (isOpen) document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      form.reset();
+    };
   }, [isOpen]);
 
   if (!isOpen) return null;
@@ -43,19 +50,7 @@ export default function NewTask({ columId, isOpen, onClose }: NewTaskProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-on-surface/40 backdrop-blur-sm">
       <div className="bg-surface-container-lowest w-full max-w-xl rounded-xl shadow-[0_12px_32px_-4px_rgba(25,28,30,0.12)] flex flex-col max-h-230.25">
-        <div className="px-8 pt-8 pb-4 flex justify-between items-start">
-          <div>
-            <h2 className="text-2xl font-extrabold text-on-surface tracking-tight">
-              Create new task
-            </h2>
-          </div>
-          <button
-            onClick={() => onClose()}
-            className="material-symbols-outlined text-on-surface-variant hover:text-error transition-colors"
-          >
-            close
-          </button>
-        </div>
+        <FormHeader onClick={onClose} title="Create new task"  />
         <form
           className="px-8 py-6 space-y-6"
           onSubmit={(e) => {
@@ -79,23 +74,7 @@ export default function NewTask({ columId, isOpen, onClose }: NewTaskProps) {
               }}
             >
               {(field) => (
-                <>
-                  <input
-                    className="w-full bg-surface-container-high border-none border-b-2 border-transparent focus:border-primary focus:ring-0 px-4 py-3 rounded-t-lg text-on-surface placeholder:text-outline-variant transition-all"
-                    type="text"
-                    id="title"
-                    placeholder="New product"
-                    name={field.name}
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                  />
-                  {!field.state.meta.isValid && (
-                    <em className="text-xs text-[#93000a]">
-                      {field.state.meta.errors.join(",")}
-                    </em>
-                  )}
-                </>
+                <Input field={field} />
               )}
             </form.Field>
           </div>
@@ -107,48 +86,40 @@ export default function NewTask({ columId, isOpen, onClose }: NewTaskProps) {
               Description
             </label>
             <form.Field name="description">
-              {field => (
-                <QuillEditor 
-                    onChange={html => {
-                        const isEmpty = html === '<p><br></p>' || html === '<p></p>'
-                        field.handleChange(isEmpty ? '' : html)
-                    }}
+              {(field) => (
+                <QuillEditor
+                  onChange={(html) => {
+                    const isEmpty =
+                      html === "<p><br></p>" || html === "<p></p>";
+                    field.handleChange(isEmpty ? "" : html);
+                  }}
                 />
               )}
             </form.Field>
           </div>
-            <div>
+          <div>
             <label
               htmlFor="priority"
               className="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-2"
             >
-             Priority
+              Priority
             </label>
             <form.Field name="priority">
-              {field => (
-                <div className="w-full gap-2 flex border-none px-4 py-3 rounded-t-lg text-on-surface appearance-none transition-all">
-                    {(["low","medium","high"] as const).map(p => {
-                        const styles = {
-                            low:    "bg-secondary-container text-on-secondary-fixed-variant",
-                            medium: "bg-tertiary-fixed text-on-tertiary-fixed-variant",
-                            high:   "bg-error-container text-on-error-container",
-                        }
-
-                        const isActive = field.state.value === p
-
-                        return(
-                            <button 
-                                key={p}
-                                type="button"
-                                onClick={() => field.handleChange(isActive ? undefined : p)}
-                                className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all ${isActive ? styles[p] + " ring-2 ring-offset-1 ring-current" : "bg-surface-container-high text-on-surface-variant opacity-60 hover:opacity-100"}`}
-                            >
-                                {p}
-                            </button>
-                        )
-                    
-                    })}
-                </div>
+              {(field) => (
+                <Select field={field} />
+              )}
+            </form.Field>
+          </div>
+          <div>
+            <label
+              htmlFor="duedate"
+              className="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-2"
+            >
+              Due Date
+            </label>
+            <form.Field name="due_date">
+              {(field) => (
+                <DatePicker field={field} />
               )}
             </form.Field>
           </div>
@@ -160,9 +131,12 @@ export default function NewTask({ columId, isOpen, onClose }: NewTaskProps) {
               Add assignee
             </label>
             <form.Field name="assignee">
-              {field => (
+              {(field) => (
                 <>
-                    <MemberPicker value={field.state.value} onAdd={(e) => field.handleChange(e)} />
+                  <MemberPicker
+                    value={field.state.value}
+                    onAdd={(e) => field.handleChange(e)}
+                  />
                 </>
               )}
             </form.Field>

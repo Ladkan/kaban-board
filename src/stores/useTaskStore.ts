@@ -1,4 +1,3 @@
-// stores/useTaskStore.ts
 import { create } from 'zustand';
 import { arrayMove } from '@dnd-kit/sortable';
 import type { Task } from '../types';
@@ -31,9 +30,6 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
         expand: 'assignee',
         requestKey: `tasks-${boardId}-${Date.now()}`,
       });
-
-      console.log('tasks response:', tasks);
-      console.log('first task expand:', tasks[0]?.expand);
 
       const tasksByColumn = tasks.reduce<TaskMap>((acc, task) => {
         if (!acc[task.column]) acc[task.column] = [];

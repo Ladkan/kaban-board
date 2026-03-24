@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useBoardStore } from "../../stores/useBoardStore";
 import { useTaskStore } from "../../stores/useTaskStore";
 import { useEffect } from "react";
+import { toast } from "sonner";
 
 interface DeleteModalProps {
   isOpen: boolean;
@@ -39,11 +40,13 @@ export default function DeleteModal({
             deleteBoard(boardId)
             setModal(!isOpen)
             navigate("/kaban-board", { replace: true })
+            toast.warning("Board deleted")
         }
         if(taskId && closeModal){
             deleteTask(taskId,columnId as string)
             setModal(!isOpen)
             closeModal()
+            toast.warning("Task deleted")
         }
     }
 
