@@ -3,6 +3,7 @@ import type { Column as ColumnType, Task } from "../../types";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { TaskCard } from "./TaskCard";
 import { useFilteredTasks, useTaskStore } from "../../stores/useTaskStore";
+import { useBoardRole } from "../../hooks/useBoardRole";
 
 interface ColumnProps {
   column:     ColumnType;
@@ -16,7 +17,7 @@ export default function Column({ column, onAddTask, onTaskOpen }: ColumnProps) {
     const searchQuery = useTaskStore(s => s.searchQuery)
     const totalCount = useTaskStore(s => s.tasksByColumn[column.id]?.length ?? 0)
     const { setNodeRef } = useDroppable({ id: column.id })
-
+    const role = useBoardRole()
     return(
         <div className="w-80 shrink-0 flex flex-col max-h-full">
             <div className="flex items-center justify-between px-3 py-4 sticky top-0 bg-background/50 backdrop-blur-sm z-10">
@@ -31,10 +32,12 @@ export default function Column({ column, onAddTask, onTaskOpen }: ColumnProps) {
                     {tasks.map(task => (
                         <TaskCard key={task.id} task={task} onTaskOpen={onTaskOpen} />
                     ))}
+                    {(role === 'owner' || role === 'editor') && (
                     <button onClick={() => onAddTask(column.id)} className="w-full py-4 border-2 border-dashed border-outline-variant/30 rounded-xl text-on-surface-variant/50 flex items-center justify-center gap-2 hover:border-primary/50 hover:text-primary transition-all group">
                         <span className="material-symbols-outlined text-lg">add_circle</span>
                         <span className="text-sm font-bold">Add Task</span>
                     </button>
+                    )}
                 </div>
             </SortableContext>
         </div>

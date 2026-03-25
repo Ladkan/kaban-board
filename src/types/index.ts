@@ -46,3 +46,15 @@ export type Props = {
 }
 
 export type TaskMap = Record<string, Task[]>;
+
+export type BoardRole = 'owner' | 'editor' | 'viewer'
+
+export interface BoardMember {
+  id: string;
+  board: string;
+  user: string;
+  role: string;
+  expand?: {
+    user?: User;
+  };
+}

@@ -1,4 +1,9 @@
-import { lazy, Suspense, useEffect, useState } from "react";
+import {
+  lazy,
+  Suspense,
+  useEffect,
+  useState,
+} from "react";
 import { useParams } from "react-router-dom";
 import { useBoardStore } from "../stores/useBoardStore";
 import KanbanBoard from "../components/board/KanbanBoard";
@@ -6,43 +11,46 @@ import { useColumnStore } from "../stores/useColumnStore";
 import { useTaskStore } from "../stores/useTaskStore";
 import { client } from "../services/pocketbase";
 import type { Task } from "../types";
-import { useAuthStore } from "../stores/useAuthStore";
-import SearchBar from "../components/ui/SearchBar";
+import { useBoardRole } from "../hooks/useBoardRole";
 
 export default function Board() {
-
-  const NewTask = lazy(() => import("../components/modals/NewTask"))
-  const TaskView = lazy(() => import("../components/modals/TaskView"))
-  const DeleteModal = lazy(() => import("../components/modals/DeleteModal"))
-  const BoardModal = lazy(() => import("../components/modals/BoardModal"))
+  const NewTask = lazy(() => import("../components/modals/NewTask"));
+  const TaskView = lazy(() => import("../components/modals/TaskView"));
+  const DeleteModal = lazy(() => import("../components/modals/DeleteModal"));
+  const BoardModal = lazy(() => import("../components/modals/BoardModal"));
 
   const { boardId } = useParams<{ boardId: string }>();
-  const { boards, activeBoard, setActiveBoard } = useBoardStore();
+  const boards = useBoardStore((s) => s.boards);
+  const activeBoard = useBoardStore((s) => s.activeBoard);
+  const setActiveBoard = useBoardStore((s) => s.setActiveBoard);
+  const fetchMembers = useBoardStore((s) => s.fetchMembers);
+
   const { fetchColumns } = useColumnStore();
   const { fetchTasks } = useTaskStore();
-  const { user } = useAuthStore();
+  const role = useBoardRole();
 
   const [openModal, setOpenModal] = useState(false);
   const [activeColumnId, setActiveColumnId] = useState<string | null>(null);
   const [openTask, setOpenTask] = useState(false);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
-  const [openDeleteModal, setOpenDeleteModal] = useState(false)
-  const [openBoardModal, setOpenBoardModal] = useState(false)
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [openBoardModal, setOpenBoardModal] = useState(false);
 
   useEffect(() => {
     const board = boards.find((b) => b.id === boardId);
     if (board) setActiveBoard(board);
+    fetchMembers(boardId as string);
   }, [boardId, boards]);
-
-  const isOwner = activeBoard?.owner === user?.id;
 
   useEffect(() => {
     if (!boardId) return;
 
     fetchColumns(boardId);
     fetchTasks(boardId);
-    
-    const unsubColumns = client.collection("columns").subscribe("*", ({ record }) => {
+
+    const unsubColumns = client
+      .collection("columns")
+      .subscribe("*", ({ record }) => {
         if (record.board !== boardId) return;
         fetchColumns(boardId);
       });
@@ -85,25 +93,24 @@ export default function Board() {
             {activeBoard?.title}
           </h2>
         </div>
-        {isOwner ? (
+        {role === "owner" && (
           <div className="flex gap-4">
-          <button 
-            type="button" 
-            className="text-on-secondary-container bg-secondary-container hover:bg-on-secondary-container hover:text-secondary-container transition-colors cursor-pointer rounded-full font-bold px-3 py-2 text-sm"
-            onClick={() => setOpenBoardModal(!openBoardModal)} 
-          >
-              Update
-          </button>
-          <button
-            type="button" 
-            className="text-on-error-container bg-error-container hover:bg-on-error-container hover:text-error-container transition-colors cursor-pointer rounded-full font-bold px-3 py-2 text-sm"
-            onClick={() => setOpenDeleteModal(!openDeleteModal)}
+            <button
+              type="button"
+              className="text-on-secondary-container bg-secondary-container hover:bg-on-secondary-container hover:text-secondary-container transition-colors cursor-pointer rounded-full font-bold px-3 py-2 text-sm"
+              onClick={() => setOpenBoardModal(!openBoardModal)}
             >
-            
-            Delete
-          </button>
+              Update
+            </button>
+            <button
+              type="button"
+              className="text-on-error-container bg-error-container hover:bg-on-error-container hover:text-error-container transition-colors cursor-pointer rounded-full font-bold px-3 py-2 text-sm"
+              onClick={() => setOpenDeleteModal(!openDeleteModal)}
+            >
+              Delete
+            </button>
           </div>
-        ) : null}
+        )}
       </section>
       <KanbanBoard
         boardId={activeBoard?.id}
@@ -116,9 +123,21 @@ export default function Board() {
           columId={activeColumnId}
           onClose={handleCloseModal}
         />
-        <TaskView isOpen={openTask} task={activeTask} onClose={handleCloseTask} />
-        <DeleteModal boardId={boardId} isOpen={openDeleteModal} setModal={setOpenDeleteModal} />
-        <BoardModal board={boards.find(b => b.id === boardId)} isOpen={openBoardModal} setModal={setOpenBoardModal} />
+        <TaskView
+          isOpen={openTask}
+          task={activeTask}
+          onClose={handleCloseTask}
+        />
+        <DeleteModal
+          boardId={boardId}
+          isOpen={openDeleteModal}
+          setModal={setOpenDeleteModal}
+        />
+        <BoardModal
+          board={boards.find((b) => b.id === boardId)}
+          isOpen={openBoardModal}
+          setModal={setOpenBoardModal}
+        />
       </Suspense>
     </>
   );

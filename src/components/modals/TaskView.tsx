@@ -11,6 +11,7 @@ import QuillEditor from "../ui/QuillEditor";
 import Input from "../form/Input";
 import Select from "../form/Select";
 import DatePicker from "../form/DatePicker";
+import { useBoardRole } from "../../hooks/useBoardRole";
 
 interface TaskViewProps {
   isOpen: boolean;
@@ -22,6 +23,7 @@ export default function TaskView({ isOpen, onClose, task }: TaskViewProps) {
   const DeleteModal = lazy(() => import("./DeleteModal"));
 
   const { updateTask } = useTaskStore();
+  const role = useBoardRole()
 
   const [visible, setVisible] = useState(false);
   const [closing, setClosing] = useState(false);
@@ -70,6 +72,7 @@ export default function TaskView({ isOpen, onClose, task }: TaskViewProps) {
 
   function handleClose() {
     setClosing(true);
+    setEditMode(false)
     setTimeout(() => {
       setVisible(false);
       setClosing(false);
@@ -115,7 +118,7 @@ export default function TaskView({ isOpen, onClose, task }: TaskViewProps) {
               </button>
             </div>
             <div className="gap-2 flex justify-center items-center">
-              {editMode ? (
+              {editMode && (
                             <form.Subscribe selector={(s) => [s.canSubmit, s.isSubmitting]}>
               {([canSubmit, isSubmitting]) => (
                 <button
@@ -126,8 +129,10 @@ export default function TaskView({ isOpen, onClose, task }: TaskViewProps) {
                 </button>
               )}
             </form.Subscribe>
-              ) : (<></>)}
-              <button
+              )}
+              {(role === 'editor' || role === "owner") && (
+                <>
+                <button
                 type="button"
                 onClick={() => setEditMode(!editMode)}
                 className="text-on-secondary-container bg-secondary-container hover:bg-on-secondary-container hover:text-secondary-container transition-colors cursor-pointer rounded-full font-bold px-3 py-2 text-sm"
@@ -141,6 +146,8 @@ export default function TaskView({ isOpen, onClose, task }: TaskViewProps) {
               >
                 Delete
               </button>
+                </>
+              )}
             </div>
           </header>
 

@@ -162,10 +162,24 @@ Delete:    @request.auth.id != "" && board.owner = @request.auth.id
 
 **API Rules:**
 ```
-List/View: @request.auth.id != "" && (column.board.owner = @request.auth.id || column.board.members ~ @request.auth.id)
-Create:    @request.auth.id != "" && column.board.members ~ @request.auth.id
-Update:    @request.auth.id != "" && column.board.members ~ @request.auth.id
-Delete:    @request.auth.id != "" && column.board.members ~ @request.auth.id
+List/View: @request.auth.id != "" && ( column.board.owner = @request.auth.id || @collection.board_members.board ?= column.board && @collection.board_members.user ?= @request.auth.id)
+Create/Update/Delete: @request.auth.id != "" && ( column.board.owner = @request.auth.id || assignee.id = @request.auth.id || @collection.board_members.board ?= column.board &&  @collection.board_members.user ?= @request.auth.id && @collection.board_members.role ?= "editor" )
+```
+
+### `board_members`
+
+| Pole | Typ | Povinné |
+|---|---|---|
+| board | Relation → boards (cascade delete) | ano
+| user | Relation → users (cascade delete) | ano
+| role | Select (viewer / editor) | ano
+
+**API Rules:**
+```
+List/View: @request.auth.id != "" && (board.owner = @request.auth.id || user = @request.auth.id)
+Create:    @request.auth.id != "" && board.owner = @request.auth.id
+Update:    @request.auth.id != "" && board.owner = @request.auth.id
+Delete:    @request.auth.id != "" && board.owner = @request.auth.id
 ```
 
 ---

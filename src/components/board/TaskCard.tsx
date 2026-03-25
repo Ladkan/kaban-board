@@ -1,7 +1,7 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import type { Task } from "../../types";
-import { format } from "date-fns"
+import { format, isToday } from "date-fns"
 
 interface TaskCardProps {
   task: Task;
@@ -84,8 +84,8 @@ export function TaskCard({
         )}
         </div>
         {task.due_date && (
-          <span className="text-[10px] font-bold text-on-surface-variant/60">
-            {format(new Date(task.due_date), "dd/MM")}
+          <span className={`text-[10px] font-bold ${isToday(new Date(task.due_date)) ? "text-primary" : "text-on-surface-variant/60"} `}>
+            {isToday(new Date(task.due_date)) ? "Today" : format(new Date(task.due_date), "dd/MM")}
           </span>
         )}
       </div>

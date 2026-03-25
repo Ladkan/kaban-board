@@ -1,12 +1,12 @@
 import { useForm } from "@tanstack/react-form";
 import type React from "react";
 import { useBoardStore } from "../../stores/useBoardStore";
-import MemberPicker from "./MemberPicker";
 import { useEffect } from "react";
 import type { Board } from "../../types";
 import { toast } from "sonner";
 import Input from "../form/Input";
 import FormHeader from "../form/FormHeader";
+import MemberSelect from "../form/MemberSelect";
 
 interface BoardModallProps {
   setModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -19,7 +19,10 @@ export default function BoardModal({
   isOpen,
   board,
 }: BoardModallProps) {
-  const { createBoard, updateBoard } = useBoardStore();
+  const createBoard = useBoardStore((s) => s.createBoard);
+  const updateBoard = useBoardStore((s) => s.updateBoard);
+  const removeMember = useBoardStore((s) => s.removeMember);
+  const addMember = useBoardStore((s) => s.addMember);
 
   const form = useForm({
     defaultValues: {
@@ -28,15 +31,25 @@ export default function BoardModal({
     },
     onSubmit: async ({ value }) => {
       if (board) {
+        if (value.members !== board.members) {
+          board.members.forEach(async (m) => {
+            if (!value.members.includes(m)) await removeMember(board.id, m);
+          });
+          value.members.forEach(async (m) => {
+            if (!board.members.includes(m))
+              await addMember(board.id, m, "viewer");
+          });
+        }
+
         await updateBoard(
           board.id,
           value.title as string,
           value.members as string[],
         );
-        toast.info("Board updated")
+        toast.info("Board updated");
       } else {
         await createBoard(value.title as string, value.members as string[]);
-        toast.success("New board created")
+        toast.success("New board created");
       }
 
       form.reset();
@@ -66,7 +79,10 @@ export default function BoardModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-on-surface/40 backdrop-blur-sm">
       <div className="bg-surface-container-lowest w-full max-w-xl rounded-xl shadow-[0_12px_32px_-4px_rgba(25,28,30,0.12)] overflow-hidden flex flex-col max-h-230.25">
-        <FormHeader title={board ? "Update board" : "Create new board"} onClick={() => setModal(!isOpen)}  />
+        <FormHeader
+          title={board ? "Update board" : "Create new board"}
+          onClick={() => setModal(!isOpen)}
+        />
         <form
           className="px-8 py-6 space-y-6 overflow-y-auto"
           onSubmit={(e) => {
@@ -89,9 +105,7 @@ export default function BoardModal({
                   value.length >= 1 ? undefined : "Enter title",
               }}
             >
-              {(field) => (
-                <Input field={field} />
-              )}
+              {(field) => <Input field={field} />}
             </form.Field>
           </div>
           <div>
@@ -104,10 +118,14 @@ export default function BoardModal({
             {
               <form.Field name="members">
                 {(field) => (
-                  <MemberPicker
-                    values={field.state.value}
+                  <MemberSelect
+                    boardId={board?.id as string}
                     onChange={(ids) => field.handleChange(ids)}
                   />
+                  // <MemberPicker
+                  //   values={field.state.value}
+                  //   onChange={(ids) => field.handleChange(ids)}
+                  // />
                 )}
               </form.Field>
             }
