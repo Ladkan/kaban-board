@@ -23,37 +23,35 @@ export default function TaskView({ isOpen, onClose, task }: TaskViewProps) {
   const DeleteModal = lazy(() => import("./DeleteModal"));
 
   const { updateTask } = useTaskStore();
-  const role = useBoardRole()
+  const role = useBoardRole();
 
   const [visible, setVisible] = useState(false);
   const [closing, setClosing] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [taskDraft, setTaskDraft] = useState<Task | null>(task);
 
   const form = useForm({
     defaultValues: {
-      title: task?.title || "",
-      description: task?.description,
-      priority: task?.priority,
-      assignee: task?.assignee,
-      due_date: task?.due_date,
+      title: taskDraft?.title || "",
+      description: taskDraft?.description,
+      priority: taskDraft?.priority,
+      assignee: taskDraft?.assignee,
+      due_date: taskDraft?.due_date,
     },
     onSubmit: async ({ value }) => {
       if (!task) return;
 
       await updateTask(task.id, value);
+      setTaskDraft((prev) => (prev ? { ...prev, ...value } : prev));
       setEditMode(false);
-      updateTaskData(task,value)
       toast.info("Task updated");
     },
   });
 
-  function updateTaskData(task: Task, updates: Partial<Task>){
-    (Object.keys(updates) as Array<keyof Task>).forEach(key => {
-      if(updates[key] !== undefined && task[key] !== updates[key])
-        (task as any)[key] = updates[key]
-    })
-  }
+  useEffect(() => {
+    if(isOpen) setTaskDraft(task)
+  }, [isOpen, task])
 
   useEffect(() => {
     if (isOpen) {
@@ -72,7 +70,7 @@ export default function TaskView({ isOpen, onClose, task }: TaskViewProps) {
 
   function handleClose() {
     setClosing(true);
-    setEditMode(false)
+    setEditMode(false);
     setTimeout(() => {
       setVisible(false);
       setClosing(false);
@@ -86,8 +84,8 @@ export default function TaskView({ isOpen, onClose, task }: TaskViewProps) {
     <>
       <form
         onSubmit={(e) => {
-            e.preventDefault();
-            form.handleSubmit();
+          e.preventDefault();
+          form.handleSubmit();
         }}
         className={`fixed inset-0 z-50 flex items-center justify-end transition-colors duration-300
         ${closing ? "bg-on-surface/0" : "bg-on-surface/20"}`}
@@ -119,33 +117,33 @@ export default function TaskView({ isOpen, onClose, task }: TaskViewProps) {
             </div>
             <div className="gap-2 flex justify-center items-center">
               {editMode && (
-                            <form.Subscribe selector={(s) => [s.canSubmit, s.isSubmitting]}>
-              {([canSubmit, isSubmitting]) => (
-                <button
-                  disabled={!canSubmit || !!isSubmitting}
-                  className="cursor-pointer px-3 py-2 text-sm primary-gradient text-white rounded-full font-bold shadow-[0_4px_14px_rgba(0,64,161,0.3)] active:opacity-80 transition-all"
-                >
-                  Update
-                </button>
+                <form.Subscribe selector={(s) => [s.canSubmit, s.isSubmitting]}>
+                  {([canSubmit, isSubmitting]) => (
+                    <button
+                      disabled={!canSubmit || !!isSubmitting}
+                      className="cursor-pointer px-3 py-2 text-sm primary-gradient text-white rounded-full font-bold shadow-[0_4px_14px_rgba(0,64,161,0.3)] active:opacity-80 transition-all"
+                    >
+                      Update
+                    </button>
+                  )}
+                </form.Subscribe>
               )}
-            </form.Subscribe>
-              )}
-              {(role === 'editor' || role === "owner") && (
+              {(role === "editor" || role === "owner") && (
                 <>
-                <button
-                type="button"
-                onClick={() => setEditMode(!editMode)}
-                className="text-on-secondary-container bg-secondary-container hover:bg-on-secondary-container hover:text-secondary-container transition-colors cursor-pointer rounded-full font-bold px-3 py-2 text-sm"
-              >
-                {editMode ? 'Cancel' : 'Edit'}
-              </button>
-              <button
-                type="button"
-                onClick={() => setOpenDeleteModal(!openDeleteModal)}
-                className="text-on-error-container bg-error-container hover:bg-on-error-container hover:text-error-container transition-colors cursor-pointer rounded-full font-bold px-3 py-2 text-sm"
-              >
-                Delete
-              </button>
+                  <button
+                    type="button"
+                    onClick={() => setEditMode(!editMode)}
+                    className="text-on-secondary-container bg-secondary-container hover:bg-on-secondary-container hover:text-secondary-container transition-colors cursor-pointer rounded-full font-bold px-3 py-2 text-sm"
+                  >
+                    {editMode ? "Cancel" : "Edit"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setOpenDeleteModal(!openDeleteModal)}
+                    className="text-on-error-container bg-error-container hover:bg-on-error-container hover:text-error-container transition-colors cursor-pointer rounded-full font-bold px-3 py-2 text-sm"
+                  >
+                    Delete
+                  </button>
                 </>
               )}
             </div>
@@ -162,32 +160,28 @@ export default function TaskView({ isOpen, onClose, task }: TaskViewProps) {
                         value.length >= 1 ? undefined : "Enter title",
                     }}
                   >
-                    {(field) => (
-                      <Input field={field} />
-                    )}
+                    {(field) => <Input field={field} />}
                   </form.Field>
                 ) : (
                   <h2 className="text-3xl font-extrabold leading-tight tracking-tight text-on-surface">
-                    {task?.title}
+                    {taskDraft?.title}
                   </h2>
                 )}
                 {editMode ? (
                   <form.Field name="priority">
-                    {(field) => (
-                      <Select field={field} />
-                    )}
+                    {(field) => <Select field={field} />}
                   </form.Field>
                 ) : (
                   <>
-                    {task?.priority && (
+                    {taskDraft?.priority && (
                       <span
                         className={`text-[10px] px-2.5 py-1 rounded-full font-bold uppercase tracking-wider
-              ${task.priority === "high" ? "bg-error-container text-on-error-container" : ""}
-              ${task.priority === "medium" ? "bg-tertiary-fixed text-on-tertiary-fixed-variant" : ""}
-              ${task.priority === "low" ? "bg-secondary-container text-on-secondary-fixed-variant" : ""}
+              ${taskDraft.priority === "high" ? "bg-error-container text-on-error-container" : ""}
+              ${taskDraft.priority === "medium" ? "bg-tertiary-fixed text-on-tertiary-fixed-variant" : ""}
+              ${taskDraft.priority === "low" ? "bg-secondary-container text-on-secondary-fixed-variant" : ""}
             `}
                       >
-                        {task.priority}
+                        {taskDraft.priority}
                       </span>
                     )}
                   </>
@@ -212,15 +206,15 @@ export default function TaskView({ isOpen, onClose, task }: TaskViewProps) {
                     </form.Field>
                   ) : (
                     <>
-                      {task?.expand?.assignee ? (
+                      {taskDraft?.expand?.assignee ? (
                         <div className="flex items-center gap-3 p-2 rounded-xl bg-surface-container-low hover:bg-surface-container-high transition-colors">
                           <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
-                            {task.expand.assignee.name
+                            {taskDraft.expand.assignee.name
                               .slice(0, 2)
                               .toUpperCase()}
                           </div>
                           <p className="text-sm font-semibold text-on-surface">
-                            {task.expand.assignee.name}
+                            {taskDraft.expand.assignee.name}
                           </p>
                         </div>
                       ) : (
@@ -237,16 +231,14 @@ export default function TaskView({ isOpen, onClose, task }: TaskViewProps) {
                   </label>
                   {editMode ? (
                     <form.Field name="due_date">
-                      {(field) => (
-                        <DatePicker field={field} />
-                      )}
+                      {(field) => <DatePicker field={field} />}
                     </form.Field>
                   ) : (
                     <>
-                      {task?.due_date ? (
+                      {taskDraft?.due_date ? (
                         <div className="flex items-center gap-3 p-2 rounded-xl bg-surface-container-low hover:bg-surface-container-high transition-colors cursor-pointer group">
                           <div
-                            className={`w-8 h-8 rounded-full flex items-center justify-center ${isOverDue(task.due_date) ? "text-on-error-container bg-error-container" : "text-primary bg-primary/10"}`}
+                            className={`w-8 h-8 rounded-full flex items-center justify-center ${isOverDue(taskDraft.due_date) ? "text-on-error-container bg-error-container" : "text-primary bg-primary/10"}`}
                           >
                             <span
                               className="material-symbols-outlined"
@@ -257,16 +249,16 @@ export default function TaskView({ isOpen, onClose, task }: TaskViewProps) {
                           </div>
                           <div className="flex-1">
                             <p
-                              className={`text-sm font-semibold ${isOverDue(task.due_date) ? "text-error" : "text-on-surface-variant"}`}
+                              className={`text-sm font-semibold ${isOverDue(taskDraft.due_date) ? "text-error" : "text-on-surface-variant"}`}
                             >
-                              {format(new Date(task.due_date), "dd/MM/yyyy")}
+                              {format(new Date(taskDraft.due_date), "dd/MM/yyyy")}
                             </p>
-                            {isOverDue(task.due_date) && (
+                            {isOverDue(taskDraft.due_date) && (
                               <p className="text-[0.65rem] text-on-error-container/60">
                                 Overdue by{" "}
                                 {differenceInDays(
                                   startOfDay(new Date()),
-                                  startOfDay(new Date(task.due_date)),
+                                  startOfDay(new Date(taskDraft.due_date)),
                                 )}{" "}
                                 days
                               </p>
@@ -302,10 +294,10 @@ export default function TaskView({ isOpen, onClose, task }: TaskViewProps) {
                   </form.Field>
                 ) : (
                   <>
-                    {task?.description ? (
+                    {taskDraft?.description ? (
                       <div
                         dangerouslySetInnerHTML={{
-                          __html: DOMPurify.sanitize(task.description),
+                          __html: DOMPurify.sanitize(taskDraft.description),
                         }}
                       />
                     ) : (
@@ -325,8 +317,8 @@ export default function TaskView({ isOpen, onClose, task }: TaskViewProps) {
           isOpen={openDeleteModal}
           setModal={setOpenDeleteModal}
           closeModal={handleClose}
-          taskId={task?.id}
-          columnId={task?.column}
+          taskId={taskDraft?.id}
+          columnId={taskDraft?.column}
         />
       </Suspense>
     </>

@@ -3,10 +3,9 @@ import BoardItem from "../components/ui/BoardItem";
 import { useBoardStore } from "../stores/useBoardStore";
 import { lazy, Suspense, useEffect, useState } from "react";
 
+const BoardModal = lazy(() => import("../components/modals/BoardModal"));
+
 export default function Home() {
-
-  const BoardModal = lazy(() => import("../components/modals/BoardModal"))
-
   const { boards, fetchBoard } = useBoardStore();
   const setBoard = useBoardStore(s => s.setActiveBoard)
   const [newModal, setNewModal] = useState(false)

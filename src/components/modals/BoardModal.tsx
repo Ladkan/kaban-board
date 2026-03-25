@@ -32,13 +32,14 @@ export default function BoardModal({
     onSubmit: async ({ value }) => {
       if (board) {
         if (value.members !== board.members) {
-          board.members.forEach(async (m) => {
-            if (!value.members.includes(m)) await removeMember(board.id, m);
-          });
-          value.members.forEach(async (m) => {
-            if (!board.members.includes(m))
-              await addMember(board.id, m, "viewer");
-          });
+          await Promise.all([
+            ...board.members.map(async (m) => {
+              if (!value.members.includes(m)) await removeMember(board.id, m);
+            }),
+            ...value.members.map(async (m) => {
+              if (!board.members.includes(m)) await addMember(board.id, m, "viewer");
+            })
+          ]);
         }
 
         await updateBoard(

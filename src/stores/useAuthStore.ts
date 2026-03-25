@@ -18,14 +18,24 @@ export const useAuthStore = create<AuthStore>()(
             isAuthenticated: client.authStore.isValid,
 
             login: async (email, password) => {
-                const { record } = await client.collection('users').authWithPassword(email, password)
-                set({ user: record, isAuthenticated: true })
+                try {
+                    const { record } = await client.collection('users').authWithPassword(email, password)
+                    set({ user: record, isAuthenticated: true })
+                } catch (err) {
+                    console.error("Login failed:", err);
+                    throw err;
+                }
             },
 
             register: async (name, email, password) => {
-                await client.collection('users').create({ name, email, password, passwordConfirm: password })
-                const { record } = await client.collection('users').authWithPassword(email, password)
-                set({ user: record, isAuthenticated: true })
+                try {
+                    await client.collection('users').create({ name, email, password, passwordConfirm: password })
+                    const { record } = await client.collection('users').authWithPassword(email, password)
+                    set({ user: record, isAuthenticated: true })
+                } catch (err) {
+                    console.error("Registration failed:", err);
+                    throw err;
+                }
             },
             
             logout: () => {

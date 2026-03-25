@@ -13,12 +13,12 @@ import { client } from "../services/pocketbase";
 import type { Task } from "../types";
 import { useBoardRole } from "../hooks/useBoardRole";
 
-export default function Board() {
-  const NewTask = lazy(() => import("../components/modals/NewTask"));
-  const TaskView = lazy(() => import("../components/modals/TaskView"));
-  const DeleteModal = lazy(() => import("../components/modals/DeleteModal"));
-  const BoardModal = lazy(() => import("../components/modals/BoardModal"));
+const NewTask = lazy(() => import("../components/modals/NewTask"));
+const TaskView = lazy(() => import("../components/modals/TaskView"));
+const DeleteModal = lazy(() => import("../components/modals/DeleteModal"));
+const BoardModal = lazy(() => import("../components/modals/BoardModal"));
 
+export default function Board() {
   const { boardId } = useParams<{ boardId: string }>();
   const boards = useBoardStore((s) => s.boards);
   const activeBoard = useBoardStore((s) => s.activeBoard);

@@ -1,9 +1,8 @@
 import { useMemo } from "react";
 import { useAuthStore } from "../stores/useAuthStore";
 import { useBoardStore } from "../stores/useBoardStore";
-import type { BoardRole } from "../types";
 
-export function useBoardRole(): BoardRole {
+export function useBoardRole() {
     const user = useAuthStore(s => s.user)
     const activeBoard = useBoardStore(s => s.activeBoard)
     const members = useBoardStore(s => s.members)

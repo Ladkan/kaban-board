@@ -9,16 +9,14 @@ import {
   type DragOverEvent,
   type DragStartEvent,
 } from "@dnd-kit/core";
-import { arrayMove } from "@dnd-kit/sortable";
+import { arrayMove, SortableContext, horizontalListSortingStrategy } from "@dnd-kit/sortable";
 import { useState, useRef } from "react";
 import { useColumnStore } from "../../stores/useColumnStore";
 import { useTaskStore } from "../../stores/useTaskStore";
 import Column from "./Column";
 import { TaskCard } from "./TaskCard";
-import type { Task } from "../../types";
+import type { Column as ColumnType, Task } from "../../types";
 import { client } from "../../services/pocketbase";
-import { useBoardRole } from "../../hooks/useBoardRole";
-import { useAuthStore } from "../../stores/useAuthStore";
 
 interface KanbanBoardProps {
   boardId: string | undefined;
@@ -31,9 +29,11 @@ export default function KanbanBoard({
   onTaskOpen,
 }: KanbanBoardProps) {
   const columns = useColumnStore((s) => s.columns);
+  const reorderColumns = useColumnStore(s => s.reorderColumns)
   const tasksByColumn = useTaskStore((s) => s.tasksByColumn);
 
   const [activeTask, setActiveTask] = useState<Task | null>(null);
+  const [activeColumn, setActiveColumn] = useState<ColumnType | null>(null)
 
   const dragSnapshot = useRef<typeof tasksByColumn | null>(null);
   const sensors = useSensors(
@@ -50,6 +50,10 @@ export default function KanbanBoard({
   }
 
   function handleDragStart({ active }: DragStartEvent) {
+    if (active.data.current?.type === "Column") {
+      setActiveColumn(active.data.current.column);
+      return;
+    }
 
     const state = useTaskStore.getState().tasksByColumn;
     const task = Object.values(state)
@@ -63,6 +67,7 @@ export default function KanbanBoard({
 
   function handleDragOver({ active, over }: DragOverEvent) {
     if (!over) return;
+    if (active.data.current?.type === "Column") return;
 
     const activeId = active.id as string;
     const overId = over.id as string;
@@ -101,12 +106,23 @@ export default function KanbanBoard({
 
   async function handleDragEnd({ active, over }: DragEndEvent) {
     setActiveTask(null);
+    setActiveColumn(null);
 
     if (!over) {
       if (dragSnapshot.current) {
         useTaskStore.setState({ tasksByColumn: dragSnapshot.current });
       }
       dragSnapshot.current = null;
+      return;
+    }
+
+    if (active.data.current?.type === "Column") {
+      const activeId = active.id as string;
+      const overId = over.id as string;
+
+      if (activeId !== overId) {
+        reorderColumns(activeId, overId);
+      }
       return;
     }
 
@@ -167,19 +183,22 @@ export default function KanbanBoard({
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
     >
-      <section className="h-full flex-1 px-10 pb-10 flex gap-6 items-start overflow-x-scroll md:overflow-auto">
-        {columns.map((column) => (
-          <Column
-            key={column.id}
-            column={column}
-            onAddTask={onAddTask}
-            onTaskOpen={onTaskOpen}
-          />
-        ))}
-      </section>
+      <SortableContext items={columns.map(c => c.id)} strategy={horizontalListSortingStrategy}>
+        <section className="h-full flex-1 px-10 pb-10 flex gap-6 items-start overflow-x-scroll md:overflow-auto">
+          {columns.map((column) => (
+            <Column
+              key={column.id}
+              column={column}
+              onAddTask={onAddTask}
+              onTaskOpen={onTaskOpen}
+            />
+          ))}
+        </section>
+      </SortableContext>
 
       <DragOverlay>
         {activeTask && <TaskCard task={activeTask} isOverlay />}
+        {activeColumn && <Column column={activeColumn} onAddTask={() => {}} onTaskOpen={() => {}} />}
       </DragOverlay>
     </DndContext>
   );

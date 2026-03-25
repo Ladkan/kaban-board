@@ -44,7 +44,7 @@ export const useBoardStore = create<BoardStore>((set) => ({
   fetchBoard: async () => {
     set({ isLoading: true });
     const boards = await getBoards();
-    set({ boards: boards as unknown as Board[], isLoading: false });
+    set({ boards: boards, isLoading: false });
   },
 
   createBoard: async (title, members) => {

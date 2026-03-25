@@ -19,11 +19,22 @@ class ErrorBoundary extends Component<
   static getDerivedStateFromError(e: Error) {
     return { error: e.message };
   }
+  componentDidCatch(error: Error, info: any) {
+    console.error("ErrorBoundary caught an error:", error, info);
+  }
   render() {
     if (this.state.error)
       return (
-        <div style={{ color: "red", padding: "2rem", fontSize: "1rem" }}>
-          <b>Error:</b> {this.state.error}
+        <div style={{ padding: "2rem", display: "flex", flexDirection: "column", gap: "1rem", alignItems: "flex-start", background: "#1a1a1a", color: "white", minHeight: "100vh" }}>
+          <div style={{ color: "#ff4d4f", fontSize: "1rem" }}>
+            <b>Application Error:</b> {this.state.error}
+          </div>
+          <button 
+            onClick={() => this.setState({ error: null })}
+            style={{ padding: "0.5rem 1rem", background: "#ff4d4f", color: "white", border: "none", borderRadius: "10px", cursor: "pointer", fontWeight: "bold" }}
+          >
+            Try Again
+          </button>
         </div>
       );
     return this.props.children;

@@ -43,35 +43,50 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   },
 
   createTask: async (columnId, data) => {
-    const existing = get().tasksByColumn[columnId] ?? [];
-    
-    const task = await createTask(columnId, data, existing)
+    try {
+      const existing = get().tasksByColumn[columnId] ?? [];
+      
+      const task = await createTask(columnId, data, existing)
 
-    set((s) => ({
-      tasksByColumn: {
-        ...s.tasksByColumn,
-        [columnId]: [...(s.tasksByColumn[columnId] ?? []), task],
-      },
-    }));
+      set((s) => ({
+        tasksByColumn: {
+          ...s.tasksByColumn,
+          [columnId]: [...(s.tasksByColumn[columnId] ?? []), task],
+        },
+      }));
+    } catch (err) {
+      console.error("createTask error:", err);
+      throw err;
+    }
   },
 
   updateTask: async (id, data) => {
-    await client.collection("tasks").update(id, data);
-    set((s) => ({
-      tasksByColumn: mapAllColumns(s.tasksByColumn, (tasks) =>
-        tasks.map((t) => (t.id === id ? { ...t, ...data } : t)),
-      ),
-    }));
+    try {
+      await client.collection("tasks").update(id, data);
+      set((s) => ({
+        tasksByColumn: mapAllColumns(s.tasksByColumn, (tasks) =>
+          tasks.map((t) => (t.id === id ? { ...t, ...data } : t)),
+        ),
+      }));
+    } catch (err) {
+      console.error("updateTask error:", err);
+      throw err;
+    }
   },
 
   deleteTask: async (id, columnId) => {
-    await client.collection("tasks").delete(id);
-    set((s) => ({
-      tasksByColumn: {
-        ...s.tasksByColumn,
-        [columnId]: s.tasksByColumn[columnId].filter((t) => t.id !== id),
-      },
-    }));
+    try {
+      await client.collection("tasks").delete(id);
+      set((s) => ({
+        tasksByColumn: {
+          ...s.tasksByColumn,
+          [columnId]: s.tasksByColumn[columnId].filter((t) => t.id !== id),
+        },
+      }));
+    } catch (err) {
+      console.error("deleteTask error:", err);
+      throw err;
+    }
   },
 
   reorderInColumn: (activeId, overId, columnId) => {

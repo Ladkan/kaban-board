@@ -1,8 +1,8 @@
-import type { BoardMember } from "../types"
+import type { Board } from "../types"
 import { client } from "./pocketbase"
 
 export const getBoards = async () => {
-    return await client.collection('boards').getFullList({
+    return await client.collection('boards').getFullList<Board>({
         sort: '-created',
         expand: 'owner,members',
     })
@@ -19,13 +19,13 @@ export const createBoard = async (title: string, members: string[]) => {
         client.collection("columns").create({ title: "Todo", order: 1000, board: board.id }),
         client.collection("columns").create({ title: "In Progress", order: 2000, board: board.id }),
         client.collection("columns").create({ title: "Done", order: 3000, board: board.id }),
-        ...members.map(m => {
+        ...members.map(m => 
             client.collection("board_members").create({
                 board: board.id,
                 user: m,
                 role: 'viewer'
             })
-        })
+        )
     ])
     
     return board
