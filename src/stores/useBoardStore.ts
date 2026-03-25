@@ -10,7 +10,7 @@ interface BoardStore {
     fetchBoard: () => Promise<void>;
     createBoard: (title: string, members: string[]) => Promise<RecordModel>;
     updateBoard: (boardId: string, title: string, members: string[]) => Promise<void>;
-    setActiveBoard: (board: Board) => void;
+    setActiveBoard: (board: Board | null) => void;
     deleteBoard: (boardId: string) => void;
 }
 

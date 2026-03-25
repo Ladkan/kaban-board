@@ -2,17 +2,19 @@ import { useDroppable } from "@dnd-kit/core";
 import type { Column as ColumnType, Task } from "../../types";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { TaskCard } from "./TaskCard";
+import { useFilteredTasks, useTaskStore } from "../../stores/useTaskStore";
 
 interface ColumnProps {
   column:     ColumnType;
-  tasks:      Task[];
   onAddTask:  (columnId: string) => void;
   onTaskOpen: (task: Task) => void;
 }
 
 
-export default function Column({ column, tasks, onAddTask, onTaskOpen }: ColumnProps) {
-
+export default function Column({ column, onAddTask, onTaskOpen }: ColumnProps) {
+    const tasks = useFilteredTasks(column.id)
+    const searchQuery = useTaskStore(s => s.searchQuery)
+    const totalCount = useTaskStore(s => s.tasksByColumn[column.id]?.length ?? 0)
     const { setNodeRef } = useDroppable({ id: column.id })
 
     return(
@@ -21,7 +23,7 @@ export default function Column({ column, tasks, onAddTask, onTaskOpen }: ColumnP
                 <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-slate-400"></span>
                     <h3 className="font-headline text-sm font-bold tracking-tight text-on-surface uppercase">{column.title}</h3>
-                    <span className="bg-surface-container-high text-on-surface-variant text-[10px] px-2 py-0.5 rounded-full font-bold">{tasks.length}</span>
+                    <span className="bg-surface-container-high text-on-surface-variant text-[10px] px-2 py-0.5 rounded-full font-bold">{searchQuery ? `${tasks.length} / ${totalCount}` : tasks.length}</span>
                 </div>
             </div>
             <SortableContext items={tasks.map(t => t.id)} strategy={verticalListSortingStrategy}>

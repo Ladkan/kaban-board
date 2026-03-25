@@ -167,7 +167,6 @@ export default function KanbanBoard({ onAddTask, onTaskOpen }: KanbanBoardProps)
           <Column
             key={column.id}
             column={column}
-            tasks={tasksByColumn[column.id] ?? []}
             onAddTask={onAddTask}
             onTaskOpen={onTaskOpen}
           />

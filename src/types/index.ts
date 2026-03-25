@@ -44,3 +44,5 @@ export interface Column {
 export type Props = {
     field: ReturnType<any>
 }
+
+export type TaskMap = Record<string, Task[]>;

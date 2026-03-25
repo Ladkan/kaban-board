@@ -8,12 +8,13 @@ export default function Home() {
   const BoardModal = lazy(() => import("../components/modals/BoardModal"))
 
   const { boards, fetchBoard } = useBoardStore();
-
+  const setBoard = useBoardStore(s => s.setActiveBoard)
   const [newModal, setNewModal] = useState(false)
 
   useHotkey("N", () => setNewModal(true))
 
   useEffect(() => {
+    setBoard(null)
     fetchBoard()
   }, []);
 

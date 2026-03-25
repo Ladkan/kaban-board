@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 
-
 export default function Sidebar() {
   return (
     <aside className="w-screen md:h-screen ease-in-out bottom-0 md:w-64 fixed xl:left-0 xl:top-0 flex md:flex-col bg-slate-100 font-semibold text-sm tracking-tight z-50 transition-all">

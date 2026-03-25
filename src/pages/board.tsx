@@ -7,6 +7,7 @@ import { useTaskStore } from "../stores/useTaskStore";
 import { client } from "../services/pocketbase";
 import type { Task } from "../types";
 import { useAuthStore } from "../stores/useAuthStore";
+import SearchBar from "../components/ui/SearchBar";
 
 export default function Board() {
 
