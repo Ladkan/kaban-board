@@ -2,8 +2,6 @@
 
 Fullstack aplikace pro správu úkolů ve stylu Kanban boardu. Postavena na **React**, **Zustand**, **TanStack Form** a **PocketBase**.
 
-![alt text](https://i.postimg.cc/YC0QrtfB/firefox-uvd-LXxh-Ob-Z.png)
-
 ---
 
 ## Ukázkové přihlašovací údaje
@@ -198,6 +196,8 @@ npm run typecheck  # TypeScript kontrola
 ```
 
 ---
+
+![alt text](https://i.postimg.cc/YC0QrtfB/firefox-uvd-LXxh-Ob-Z.png)
 
 ## Licence
 
