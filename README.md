@@ -2,6 +2,8 @@
 
 Fullstack aplikace pro správu úkolů ve stylu Kanban boardu. Postavena na **React**, **Zustand**, **TanStack Form** a **PocketBase**.
 
+![alt text](https://i.postimg.cc/YC0QrtfB/firefox-uvd-LXxh-Ob-Z.png)
+
 ---
 
 ## Ukázkové přihlašovací údaje
@@ -28,6 +30,7 @@ Pro rychlé vyzkoušení aplikace použij jeden z testovacích účtů:
 - Progress bar dokončených úkolů
 - Priority na kartách
 - Přiřazení úkolu uživateli
+- Search úkolu v boardu
 
 ---
 
