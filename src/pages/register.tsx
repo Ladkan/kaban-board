@@ -5,8 +5,7 @@ import { Link, Navigate } from "react-router-dom";
 export default function Register() {
   const { isAuthenticated } = useAuthStore();
 
-  const regex = RegExp(/^[\w\-\.]+@([\w-]+\.)+[\w-]{2,}$/)
-
+  const regex = RegExp(/^[\w\-\.]+@([\w-]+\.)+[\w-]{2,}$/);
 
   const form = useForm({
     defaultValues: {
@@ -17,12 +16,12 @@ export default function Register() {
     },
     onSubmit: async ({ value }) => {
       //await register(value.name, value.email, value.password);
-      console.log(value)
-      alert("This is a demo, use the provided credentials")
+      console.log(value);
+      alert("This is a demo, use the provided credentials");
     },
   });
 
-  if (isAuthenticated) return <Navigate to="/kaban-board" replace />;
+  if (isAuthenticated) return <Navigate to="/kanban-board" replace />;
 
   return (
     <div className="w-full max-w-110 rounded-xl p-10 z-10 border border-[#c3c6d6]/15 tonal-depth glass-panel">
@@ -53,7 +52,8 @@ export default function Register() {
                 onBlur: ({ value }) =>
                   value.length >= 1 ? undefined : "Enter username",
               }}
-              children={(field) => (
+            >
+              {(field) => (
                 <>
                   <input
                     className="w-full bg-[#e6e8ea] border-none rounded-lg px-4 py-3 text-[#191c1e] transition-all placeholder:text-[#737785] focus:ring-0 focus:border-2 focus:border-[#0040a1]"
@@ -72,7 +72,7 @@ export default function Register() {
                   )}
                 </>
               )}
-            />
+            </form.Field>
           </div>
         </div>
         <div className="space-y-2">
@@ -87,9 +87,10 @@ export default function Register() {
               name="email"
               validators={{
                 onBlur: ({ value }) =>
-                  regex.test(value) ? undefined : "Enter valid email"
+                  regex.test(value) ? undefined : "Enter valid email",
               }}
-              children={(field) => (
+            >
+              {(field) => (
                 <>
                   <input
                     className="w-full bg-[#e6e8ea] border-none rounded-lg px-4 py-3 text-[#191c1e] transition-all placeholder:text-[#737785] focus:ring-0 focus:border-2 focus:border-[#0040a1]"
@@ -108,7 +109,7 @@ export default function Register() {
                   )}
                 </>
               )}
-            />
+            </form.Field>
           </div>
         </div>
         <div className="space-y-2">
@@ -127,7 +128,8 @@ export default function Register() {
                     ? undefined
                     : "The password must be at least 8 characters long",
               }}
-              children={(field) => (
+            >
+              {(field) => (
                 <>
                   <input
                     className="w-full bg-[#e6e8ea] border-none rounded-lg px-4 py-3 text-[#191c1e] transition-all placeholder:text-[#737785] focus:ring-0 focus:border-2 focus:border-[#0040a1]"
@@ -146,7 +148,7 @@ export default function Register() {
                   )}
                 </>
               )}
-            />
+            </form.Field>
           </div>
         </div>
         <div className="space-y-2">
@@ -166,7 +168,8 @@ export default function Register() {
                   if (value !== password) return "Password dont match";
                 },
               }}
-              children={(field) => (
+            >
+              {(field) => (
                 <>
                   <input
                     className="w-full bg-[#e6e8ea] border-none rounded-lg px-4 py-3 text-[#191c1e] transition-all placeholder:text-[#737785] focus:ring-0 focus:border-2 focus:border-[#0040a1]"
@@ -185,7 +188,7 @@ export default function Register() {
                   )}
                 </>
               )}
-            />
+            </form.Field>
           </div>
         </div>
         <form.Subscribe selector={(s) => [s.canSubmit, s.isSubmitting]}>
@@ -201,7 +204,10 @@ export default function Register() {
       </form>
       <p className="mt-8 text-center text-sm text-[#424654]">
         Already have an account?{" "}
-        <Link className="text-[#0040a1] font-bold hover:underline" to="/kaban-board/login">
+        <Link
+          className="text-[#0040a1] font-bold hover:underline"
+          to="/kanban-board/login"
+        >
           Login
         </Link>
       </p>

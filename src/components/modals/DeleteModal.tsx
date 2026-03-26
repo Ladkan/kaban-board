@@ -39,7 +39,7 @@ export default function DeleteModal({
         if(boardId){
             deleteBoard(boardId)
             setModal(!isOpen)
-            navigate("/kaban-board", { replace: true })
+            navigate("/kanban-board", { replace: true })
             toast.warning("Board deleted")
         }
         if(taskId && closeModal){

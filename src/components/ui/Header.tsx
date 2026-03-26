@@ -12,7 +12,7 @@ export default function Header() {
         <div className="flex items-center gap-6 flex-1">
           <div className="flex items-center md:hidden">
             <h1 className="text-xl font-bold tracking-tighter text-slate-900 leading-tight">
-              Kaban Board
+              Kanban Board
             </h1>
           </div>
             {activeBoard && <SearchBar />}

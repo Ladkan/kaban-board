@@ -140,7 +140,7 @@ export default function MemberSelect({
           <>
             {members.map((m) => {
               return (
-                <div className="flex items-center justify-between p-3 bg-surface-container-lowest rounded-lg">
+                <div key={m.id} className="flex items-center justify-between p-3 bg-surface-container-lowest rounded-lg">
                   <div className="flex items-center gap-4">
                     <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
                       {m.expand?.user?.name.slice(0, 2).toUpperCase()}

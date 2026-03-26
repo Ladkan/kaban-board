@@ -1,6 +1,6 @@
 {
-  "name": "kaban-board",
-  "homepage": "https://ladkan.github.io/kaban-board/",
+  "name": "kanban-board",
+  "homepage": "https://ladkan.github.io/kanban-board/",
   "version": "0.0.0",
   "type": "module",
   "scripts": {

@@ -6,7 +6,7 @@ import { client } from "../services/pocketbase";
 
 export default function Login() {
   const { login } = useAuthStore();
-  const [serverError, setServerError] = useState<string | null>(null)
+  const [serverError, setServerError] = useState<string | null>(null);
 
   const form = useForm({
     defaultValues: {
@@ -14,17 +14,17 @@ export default function Login() {
       password: "",
     },
     onSubmit: async ({ value }) => {
-      setServerError(null)
-      try{
+      setServerError(null);
+      try {
         await login(value.email, value.password);
-      } catch (err:any){
-        console.error('login error:', err);
-        setServerError(err?.response.message ?? "Wrong email or password") 
+      } catch (err: any) {
+        console.error("login error:", err);
+        setServerError(err?.response.message ?? "Wrong email or password");
       }
     },
   });
 
-  if (client.authStore.isValid) return <Navigate to="/kaban-board" replace />;
+  if (client.authStore.isValid) return <Navigate to="/kanban-board" replace />;
 
   return (
     <div className="w-full max-w-110 rounded-xl p-10 z-10 border border-[#c3c6d6]/15 tonal-depth glass-panel">
@@ -63,7 +63,8 @@ export default function Login() {
                 onBlur: ({ value }) =>
                   value.length >= 1 ? undefined : "Enter email",
               }}
-              children={(field) => (
+            >
+              {(field) => (
                 <>
                   <input
                     className="w-full bg-[#e6e8ea] border-none rounded-lg px-4 py-3 text-[#191c1e] transition-all placeholder:text-[#737785] focus:ring-0 focus:border-2 focus:border-[#0040a1]"
@@ -82,7 +83,7 @@ export default function Login() {
                   )}
                 </>
               )}
-            />
+            </form.Field>
           </div>
         </div>
         <div className="space-y-2">
@@ -99,7 +100,8 @@ export default function Login() {
                 onBlur: ({ value }) =>
                   value.length >= 1 ? undefined : "Enter password",
               }}
-              children={(field) => (
+            >
+              {(field) => (
                 <>
                   <input
                     className="w-full bg-[#e6e8ea] border-none rounded-lg px-4 py-3 text-[#191c1e] transition-all placeholder:text-[#737785] focus:ring-0 focus:border-2 focus:border-[#0040a1]"
@@ -118,7 +120,7 @@ export default function Login() {
                   )}
                 </>
               )}
-            />
+            </form.Field>
           </div>
         </div>
         <form.Subscribe selector={(s) => [s.canSubmit, s.isSubmitting]}>
@@ -133,10 +135,10 @@ export default function Login() {
         </form.Subscribe>
       </form>
       <p className="mt-8 text-center text-sm text-[#424654]">
-        Don't have an account? 
+        Don't have an account?
         <Link
           className="text-[#0040a1] font-bold hover:underline"
-          to="/kaban-board/register"
+          to="/kanban-board/register"
         >
           Register for free
         </Link>

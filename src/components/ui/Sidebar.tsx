@@ -11,7 +11,7 @@ export default function Sidebar() {
           </div>
           <div>
             <h1 className="text-xl font-bold tracking-tighter text-slate-900 leading-tight">
-              Kaban Board
+              Kanban Board
             </h1>
             <p className="text-[10px] uppercase tracking-widest text-slate-500 font-black">
               The Orchestrated Workspace
@@ -20,11 +20,11 @@ export default function Sidebar() {
         </div>
 
         <nav className="md:flex-1 flex md:block flex-row md:space-y-1 px-4 pb-6 pt-3 items-center justify-around md:py-0 md:px-0 md:pt-0 md:items-start md:justify-normal">
-            <Link to="/kaban-board" className="rounded-xl md:rounded-none md:gap-3 flex flex-col md:flex-row items-center justify-center px-4 py-1 md:justify-normal md:px-3 md:py-2.5 text-blue-500 hover:text-slate-900 hover:bg-slate-200 transition-all duration-200">
+            <Link to="/kanban-board" className="rounded-xl md:rounded-none md:gap-3 flex flex-col md:flex-row items-center justify-center px-4 py-1 md:justify-normal md:px-3 md:py-2.5 text-blue-500 hover:text-slate-900 hover:bg-slate-200 transition-all duration-200">
                 <span className="material-symbols-outlined mb-1 md:mb-0">dashboard</span>
                 <span className="text-[11px] font-medium tracking-wide uppercase md:text-sm md:tracking-normal">Dashboard</span>
             </Link>
-            <Link to="/kaban-board/team" className="rounded-xl md:rounded-none md:gap-3 flex flex-col md:flex-row items-center justify-center px-4 py-1 md:justify-normal md:px-3 md:py-2.5 text-blue-500 hover:text-slate-900 hover:bg-slate-200 transition-all duration-200">
+            <Link to="/kanban-board/team" className="rounded-xl md:rounded-none md:gap-3 flex flex-col md:flex-row items-center justify-center px-4 py-1 md:justify-normal md:px-3 md:py-2.5 text-blue-500 hover:text-slate-900 hover:bg-slate-200 transition-all duration-200">
                 <span className="material-symbols-outlined mb-1 md:mb-0">group</span>
                 <span className="text-[11px] font-medium tracking-wide uppercase md:text-sm md:tracking-normal">Team</span>
             </Link>

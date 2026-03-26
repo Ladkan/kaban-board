@@ -55,20 +55,20 @@ function App() {
         >
           <Routes>
             <Route element={<LayoutAuth />}>
-              <Route element={<Login />} path="/kaban-board/login" />
+              <Route element={<Login />} path="/kanban-board/login" />
               <Route
                 element={<Register />}
-                path="/kaban-board/register"
+                path="/kanban-board/register"
               />
             </Route>
             <Route path="/" element={<Layout />}>
               <Route element={<ProtectedRoute />}>
-                <Route element={<Home />} path="/kaban-board" />
+                <Route element={<Home />} path="/kanban-board" />
                 <Route
                   element={<Board />}
-                  path="/kaban-board/board/:boardId"
+                  path="/kanban-board/board/:boardId"
                 />
-                <Route element={<Team />} path="/kaban-board/team" />
+                <Route element={<Team />} path="/kanban-board/team" />
               </Route>
             </Route>
             <Route

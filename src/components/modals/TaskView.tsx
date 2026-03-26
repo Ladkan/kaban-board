@@ -190,7 +190,7 @@ export default function TaskView({ isOpen, onClose, task }: TaskViewProps) {
 
               <section className="grid grid-cols-2 gap-8">
                 <div className="space-y-2">
-                  <label className="text-[0.65rem] uppercase font-bold tracking-widest text-on-surface-variant">
+                  <label htmlFor="assignee" className="text-[0.65rem] uppercase font-bold tracking-widest text-on-surface-variant">
                     Assignee
                   </label>
                   {editMode ? (
@@ -226,7 +226,7 @@ export default function TaskView({ isOpen, onClose, task }: TaskViewProps) {
                   )}
                 </div>
                 <div className="space-y-3">
-                  <label className="text-[0.65rem] uppercase font-bold tracking-widest text-on-surface-variant">
+                  <label htmlFor="due_date" className="text-[0.65rem] uppercase font-bold tracking-widest text-on-surface-variant">
                     Due Date
                   </label>
                   {editMode ? (
@@ -276,7 +276,7 @@ export default function TaskView({ isOpen, onClose, task }: TaskViewProps) {
               </section>
 
               <section className="space-y-3">
-                <label className="text-[0.65rem] uppercase font-bold tracking-widest text-on-surface-variant">
+                <label htmlFor="description" className="text-[0.65rem] uppercase font-bold tracking-widest text-on-surface-variant">
                   Description
                 </label>
                 {editMode ? (

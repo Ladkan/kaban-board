@@ -42,10 +42,9 @@ export function TaskCard({
       onClick={() => onTaskOpen?.(task)}
       className={`
         bg-surface-container-lowest relative rounded-xl p-4 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_32px_-4px_rgba(25,28,30,0.06)] group cursor-pointer border border-transparent hover:border-primary/5
-        ${
-          isDragging
-            ? "opacity-40 shadow-none"
-            : "hover:border-slate-300 hover:shadow-sm"
+        ${isDragging
+          ? "opacity-40 shadow-none"
+          : "hover:border-slate-300 hover:shadow-sm"
         }
         ${isOverlay ? "shadow-lg rotate-1 cursor-grabbing" : ""}
       `}
@@ -71,17 +70,17 @@ export function TaskCard({
         {task.title}
       </h4>
       <div className="flex items-center justify-between">
-      <div className="flex items-center gap-2">
-        {task.expand?.assignee && (
-          <>
-            <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-[11px] font-bold text-primary">
-              {task.expand.assignee.name.slice(0, 2).toUpperCase()}
-            </div>
-            <span className="text-[10px] font-bold text-on-surface-variant">
-              {task.expand.assignee.name}
-            </span>
-          </>
-        )}
+        <div className="flex items-center gap-2">
+          {task.expand?.assignee && (
+            <>
+              <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-[11px] font-bold text-primary">
+                {task.expand.assignee.name.slice(0, 2).toUpperCase()}
+              </div>
+              <span className="text-[10px] font-bold text-on-surface-variant">
+                {task.expand.assignee.name}
+              </span>
+            </>
+          )}
         </div>
         {task.due_date && (
           <span className={`text-[10px] font-bold ${isToday(new Date(task.due_date)) ? "text-primary" : "text-on-surface-variant/60"} `}>

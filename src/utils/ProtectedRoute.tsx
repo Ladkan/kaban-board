@@ -5,5 +5,5 @@ export default function ProtectedRoute(){
 
     const { isAuthenticated } = useAuthStore()
 
-    return isAuthenticated ? <Outlet /> : <Navigate to="/kaban-board/login" replace />
+    return isAuthenticated ? <Outlet /> : <Navigate to="/kanban-board/login" replace />
 }
