@@ -1,0 +1,1 @@
+import{i as e}from"./jsx-runtime-D-oznMWL.js";import{r as t}from"./pocketbase-C8dUhLHD.js";import{_ as n,g as r}from"./index-CVrwNr0J.js";var i=e(t(),1);function a(){let e=n(e=>e.user),t=r(e=>e.activeBoard),a=r(e=>e.members);return(0,i.useMemo)(()=>!e||!t?`viewer`:t.owner===e.id?`owner`:a.find(t=>t.user===e.id)?.role??`viewer`,[e,t,a])}export{a as t};

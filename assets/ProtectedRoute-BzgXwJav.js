@@ -1,1 +1,0 @@
-import{t as e}from"./jsx-runtime-D-oznMWL.js";import"./pocketbase-C8dUhLHD.js";import{_ as t,b as n,y as r}from"./index-CrVP3LA7.js";var i=e();function a(){let{isAuthenticated:e}=t();return e?(0,i.jsx)(n,{}):(0,i.jsx)(r,{to:`/kanban-board/login`,replace:!0})}export{a as default};
